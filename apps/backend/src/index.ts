@@ -8,10 +8,15 @@ import {
 } from "./utils/resume-text-cleaner";
 import { extractResumeData } from "./clients/openai/extractResume";
 import { createResume } from "./database/queries/resumes";
+import cors from "@fastify/cors";
 
 const server = fastify();
 
 server.register(import("@fastify/multipart"));
+server.register(cors, {
+  origin: "http://localhost:3000",
+  methods: ["GET", "POST"],
+});
 
 server.post("/resume", async (request, reply) => {
   const data = await request.file();

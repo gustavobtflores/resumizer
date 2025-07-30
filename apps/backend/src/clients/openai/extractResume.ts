@@ -1,0 +1,11 @@
+import { resumeExtractionPrompt } from "../../utils/prompts/resume";
+import { openaiClient } from "./openai";
+
+export async function extractResumeData(resumeText: string) {
+  const response = await openaiClient.responses.create({
+    model: "gpt-4.1",
+    input: resumeExtractionPrompt(resumeText),
+  });
+
+  return response.output_text;
+}

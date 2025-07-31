@@ -125,3 +125,10 @@ body {
   @apply antialiased;
   font-family: var(--font-inter);
 }
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+}

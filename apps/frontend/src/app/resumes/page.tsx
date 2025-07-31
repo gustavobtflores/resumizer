@@ -20,7 +20,7 @@ export default async function Resumes() {
   return (
     <Container className="mt-20">
       <h1 className="text-2xl font-semibold mb-10">Currículos</h1>
-      <ul className="grid grid-cols-4">
+      <ul className="grid grid-cols-4 gap-4">
         {resumes.map((resume) => (
           <li key={resume.id}>
             <Link href={`/resumes/${resume.id}`}>

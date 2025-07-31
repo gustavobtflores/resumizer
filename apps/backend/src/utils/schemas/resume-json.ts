@@ -9,10 +9,7 @@ export const resumeSchema = {
       country: "",
       postal_code: "",
     },
-    linkedin_url: "",
-    github_url: "",
-    portfolio_url: "",
-    other_urls: [],
+    socials_urls: [],
   },
   professional_summary: "",
   work_experience: [

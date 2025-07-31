@@ -14,7 +14,9 @@ import {
 } from "./database/queries/resumes";
 import cors from "@fastify/cors";
 
-const server = fastify();
+const server = fastify({
+  logger: true,
+});
 
 server.register(import("@fastify/multipart"));
 server.register(cors, {
@@ -22,13 +24,15 @@ server.register(cors, {
   methods: ["GET", "POST"],
 });
 
-server.post("/resume", async (request, reply) => {
+server.post("/resumes", async (request, reply) => {
   const data = await request.file();
 
   if (data === undefined) {
     reply.status(400).send({ error: "No file uploaded" });
     return;
   }
+
+  request.log.info(`Extracting information from PDF file: ${data.filename}`);
 
   const dataBuffer = await data.toBuffer();
   const pdfData = await pdf(dataBuffer);

@@ -7,7 +7,11 @@ import {
   parseOptionalFencedJson,
 } from "./utils/resume-text-cleaner";
 import { extractResumeData } from "./clients/openai/extractResume";
-import { createResume } from "./database/queries/resumes";
+import {
+  createResume,
+  findAllResumes,
+  findResumeById,
+} from "./database/queries/resumes";
 import cors from "@fastify/cors";
 
 const server = fastify();
@@ -42,6 +46,25 @@ server.post("/resume", async (request, reply) => {
   });
 
   reply.status(200).send(createdResume);
+});
+
+server.get("/resumes", async (request, reply) => {
+  const resumes = await findAllResumes();
+
+  reply.status(200).send(resumes);
+});
+
+server.get("/resumes/:id", async (request, reply) => {
+  const { id } = request.params as { id: string };
+
+  const resume = await findResumeById(id);
+
+  if (!resume) {
+    reply.status(404).send({ error: "Resume not found" });
+    return;
+  }
+
+  reply.status(200).send(resume);
 });
 
 server.listen({ port: 8080 }, (err, address) => {

@@ -99,23 +99,5 @@ export const resumeSchema = {
       achievements: [],
     },
   ],
-  professional_associations: [
-    {
-      name: "",
-      role: "",
-      start_date: "",
-      end_date: "",
-    },
-  ],
-  references: [
-    {
-      name: "",
-      title: "",
-      company: "",
-      email: "",
-      phone: "",
-      relationship: "",
-    },
-  ],
   additional_sections: {},
 };

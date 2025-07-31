@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
-export function ResumeInput() {
+export function ResumeUploadInput() {
   const [file, setFile] = useState<File | null>(null);
 
   async function handleFileSubmit() {
@@ -17,7 +17,7 @@ export function ResumeInput() {
     const formData = new FormData();
     formData.append("resume", file);
 
-    await fetch("http://localhost:8080/resume", {
+    await fetch("http://localhost:8080/resumes", {
       method: "POST",
       body: formData,
     })

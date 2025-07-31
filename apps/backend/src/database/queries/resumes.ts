@@ -1,6 +1,20 @@
+import { eq } from "drizzle-orm";
 import { db } from "..";
 import { NewResume, resumesTable } from "../schema/resumes";
 
 export function createResume(resume: NewResume) {
   return db.insert(resumesTable).values(resume).returning();
+}
+
+export function findAllResumes() {
+  return db.select().from(resumesTable);
+}
+
+export async function findResumeById(id: string) {
+  const result = await db
+    .select()
+    .from(resumesTable)
+    .where(eq(resumesTable.id, id))
+    .limit(1);
+  return result[0];
 }

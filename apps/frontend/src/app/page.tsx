@@ -1,4 +1,5 @@
-import { ResumeInput } from "@/components/resume-upload/ResumeInput";
+import Container from "@/components/layout/Container";
+import { ResumeUploadInput } from "@/components/resume-upload/ResumeUploadInput";
 import {
   Card,
   CardContent,
@@ -9,8 +10,8 @@ import {
 
 export default function Home() {
   return (
-    <div className="container max-w-lg mx-auto h-screen flex items-center justify-center">
-      <Card className="w-full">
+    <Container className="h-screen flex items-center justify-center">
+      <Card className="w-lg">
         <CardHeader>
           <CardTitle>Faça o upload do seu currículo</CardTitle>
           <CardDescription>
@@ -18,9 +19,9 @@ export default function Home() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ResumeInput />
+          <ResumeUploadInput />
         </CardContent>
       </Card>
-    </div>
+    </Container>
   );
 }

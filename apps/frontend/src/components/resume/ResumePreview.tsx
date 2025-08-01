@@ -68,7 +68,7 @@ export function ResumePreview({ resume }: { resume: StructuredResume }) {
   return (
     <div className="px-4 col-span-2 print:col-span-3">
       <div className="bg-secondary rounded-sm col-span-2 max-w-full w-[21cm] h-[29.7cm] p-8 print:p-0">
-        <h1 className="text-5xl font-semibold">
+        <h1 className="text-3xl font-semibold">
           {resume.personal_info.full_name}
         </h1>
         <div className="flex items-center mt-2">

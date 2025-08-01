@@ -9,7 +9,12 @@ export const resumeSchema = {
       country: "",
       postal_code: "",
     },
-    socials_urls: [],
+    socials: [
+      {
+        label: "",
+        url: "",
+      },
+    ],
   },
   professional_summary: "",
   work_experience: [
@@ -68,33 +73,4 @@ export const resumeSchema = {
       achievements: [],
     },
   ],
-  publications: [
-    {
-      title: "",
-      authors: [],
-      publication_venue: "",
-      date: "",
-      url: "",
-    },
-  ],
-  awards_honors: [
-    {
-      name: "",
-      issuer: "",
-      date: "",
-      description: "",
-    },
-  ],
-  volunteer_experience: [
-    {
-      organization: "",
-      role: "",
-      location: "",
-      start_date: "",
-      end_date: "",
-      description: "",
-      achievements: [],
-    },
-  ],
-  additional_sections: {},
 };

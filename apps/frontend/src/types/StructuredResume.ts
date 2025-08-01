@@ -2,15 +2,10 @@ export interface StructuredResume {
   skills: Skills;
   projects: Project[];
   education: Education[];
-  references: Reference[];
-  publications: Publication[];
-  awards_honors: AwardsHonor[];
   personal_info: PersonalInfo;
   certifications: Certification[];
   work_experience: WorkExperience[];
-  additional_sections: AdditionalSections;
   professional_summary: string;
-  volunteer_experience: VolunteerExperience[];
 }
 
 interface Skills {
@@ -42,39 +37,13 @@ interface Education {
   relevant_coursework: string[];
 }
 
-interface Reference {
-  name: string;
-  email: string;
-  phone: string;
-  title: string;
-  company: string;
-  relationship: string;
-}
-
-interface Publication {
-  url: string;
-  date: string;
-  title: string;
-  authors: string[];
-  publication_venue: string;
-}
-
-interface AwardsHonor {
-  date: string;
-  name: string;
-  issuer: string;
-  description: string;
-}
-
 interface PersonalInfo {
   email: string;
   phone: string;
   location: Location;
   full_name: string;
-  github_url: string;
-  other_urls: string[];
-  linkedin_url: string;
   portfolio_url: string;
+  socials: { label: string; url: string }[];
 }
 
 interface Location {
@@ -101,18 +70,4 @@ interface WorkExperience {
   start_date: string;
   description: string;
   achievements: string[];
-}
-
-interface AdditionalSections {
-  [key: string]: string | string[] | null;
-}
-
-interface VolunteerExperience {
-  role: string;
-  end_date: string;
-  location: string;
-  start_date: string;
-  description: string;
-  achievements: string[];
-  organization: string;
 }

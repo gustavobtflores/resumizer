@@ -257,9 +257,7 @@ export default function Resume() {
                               value={field.value.join("\n")}
                               onChange={(e) => {
                                 const raw = e.target.value;
-                                const coursework = raw
-                                  .split("\n")
-                                  .map((item) => item.trim());
+                                const coursework = raw.split("\n");
 
                                 field.onChange(coursework);
                               }}
@@ -286,10 +284,10 @@ export default function Resume() {
                           <Input placeholder="Email" {...field} />
                         )}
                       />
-                      {["LinkedIn", "GitHub"].map((social) => (
+                      {["LinkedIn", "GitHub"].map((social, index) => (
                         <Controller
                           key={social}
-                          name={`personal_info.socials.${social.toLowerCase()}`}
+                          name={`personal_info.socials.${index}.url`}
                           control={form.control}
                           defaultValue={
                             resume.personal_info.socials.find(

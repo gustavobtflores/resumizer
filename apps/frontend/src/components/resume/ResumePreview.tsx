@@ -1,5 +1,6 @@
 import { StructuredResume } from "@/types/StructuredResume";
 import { formatDate } from "@/utils/formatDate";
+import { Fragment } from "react";
 
 function Experiences({
   experiences,
@@ -71,8 +72,30 @@ export function ResumePreview({ resume }: { resume: StructuredResume }) {
         <h1 className="text-3xl font-semibold">
           {resume.personal_info.full_name}
         </h1>
-        <div className="flex items-center mt-2">
-          <span>{resume.personal_info.email}</span>
+        <div className="flex items-center gap-2 mt-2">
+          {resume.personal_info.email && (
+            <a href={`mailto:${resume.personal_info.email}`}>
+              {resume.personal_info.email}
+            </a>
+          )}
+
+          {resume.personal_info.phone && (
+            <>
+              <span>•</span>
+              <a href={`tel:${resume.personal_info.phone}`}>
+                {resume.personal_info.phone}
+              </a>
+            </>
+          )}
+
+          {resume.personal_info.socials.map((social) => (
+            <Fragment key={social.url}>
+              <span>•</span>
+              <a href={social.url} target="_blank" rel="noopener noreferrer">
+                {social.label}
+              </a>
+            </Fragment>
+          ))}
         </div>
         <Experiences experiences={resume.work_experience} />
         <Education education={resume.education} />

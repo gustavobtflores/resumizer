@@ -50,9 +50,7 @@ function Education({
       {education.map((edu, index) => (
         <div key={index} className="mb-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">
-              {edu.degree || edu.field_of_study}
-            </h3>
+            <h3 className="text-lg font-semibold">{edu.field_of_study}</h3>
             <p className="text-sm text-muted-foreground">
               {formatDate(edu.start_date)} - {formatDate(edu.graduation_date)}
             </p>
@@ -66,13 +64,23 @@ function Education({
 }
 
 export function ResumePreview({ resume }: { resume: StructuredResume }) {
+  const socials = (
+    [
+      { key: "linkedin_url", label: "LinkedIn" },
+      { key: "github_url", label: "GitHub" },
+      { key: "portfolio_url", label: "Portfolio" },
+    ] as const
+  )
+    .map((item) => ({ ...item, url: resume.personal_info[item.key] }))
+    .filter((item) => Boolean(item.url));
+
   return (
     <div className="px-4 col-span-2 print:col-span-3">
       <div className="bg-secondary rounded-sm col-span-2 max-w-full w-[21cm] h-[29.7cm] p-8 print:p-0">
         <h1 className="text-3xl font-semibold">
           {resume.personal_info.full_name}
         </h1>
-        <div className="flex items-center gap-2 mt-2">
+        <div className="flex items-center gap-2 mt-2 flex-wrap">
           {resume.personal_info.email && (
             <a href={`mailto:${resume.personal_info.email}`}>
               {resume.personal_info.email}
@@ -88,14 +96,15 @@ export function ResumePreview({ resume }: { resume: StructuredResume }) {
             </>
           )}
 
-          {resume.personal_info.socials.map((social) => (
-            <Fragment key={social.url}>
-              <span>•</span>
-              <a href={social.url} target="_blank" rel="noopener noreferrer">
-                {social.label}
-              </a>
-            </Fragment>
-          ))}
+          {socials.length > 0 &&
+            socials.map(({ url, label }, index) => (
+              <Fragment key={index}>
+                <span>•</span>
+                <a href={url} target="_blank" rel="noopener noreferrer">
+                  {label}
+                </a>
+              </Fragment>
+            ))}
         </div>
         <Experiences experiences={resume.work_experience} />
         <Education education={resume.education} />

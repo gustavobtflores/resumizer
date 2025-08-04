@@ -1,5 +1,5 @@
 import Container from "@/components/layout/Container";
-import { ResumeUploadInput } from "@/components/resume-upload/ResumeUploadInput";
+import { ResumeUploadInput } from "@/components/features/resume-upload/ResumeUploadInput";
 import {
   Card,
   CardContent,

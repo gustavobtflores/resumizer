@@ -43,7 +43,9 @@ interface PersonalInfo {
   location: Location;
   full_name: string;
   portfolio_url: string;
-  socials: { label: string; url: string }[];
+  github_url: string;
+  linkedin_url: string;
+  other_urls: { label: string; url: string }[];
 }
 
 interface Location {

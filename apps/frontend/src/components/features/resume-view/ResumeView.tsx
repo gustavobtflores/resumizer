@@ -29,7 +29,30 @@ export default function Resume({
   const formValues = form.watch();
 
   function onSubmit(data: Partial<StructuredResume>) {
-    console.log(data);
+    const updatedResume = {
+      ...resume,
+      ...data,
+    };
+
+    fetch(`http://localhost:8080/resumes/${resumeData.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedResume),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erro ao atualizar o currículo");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Currículo atualizado com sucesso:", data);
+      })
+      .catch((error) => {
+        console.error("Erro ao atualizar o currículo:", error);
+      });
   }
 
   return (

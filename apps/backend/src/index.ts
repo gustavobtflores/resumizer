@@ -11,8 +11,10 @@ import {
   createResume,
   findAllResumes,
   findResumeById,
+  updateResume,
 } from "./database/queries/resumes";
 import cors from "@fastify/cors";
+import { NewResume } from "./database/schema/resumes";
 
 const server = fastify({
   logger: true,
@@ -21,7 +23,7 @@ const server = fastify({
 server.register(import("@fastify/multipart"));
 server.register(cors, {
   origin: "http://localhost:3000",
-  methods: ["GET", "POST"],
+  methods: ["GET", "POST", "PUT"],
 });
 
 server.post("/resumes", async (request, reply) => {
@@ -32,7 +34,7 @@ server.post("/resumes", async (request, reply) => {
     return;
   }
 
-  request.log.info(`Extracting information from PDF file: ${data.filename}`);
+  request.log.info(`Extracting information from PDF: ${data.filename}`);
 
   const dataBuffer = await data.toBuffer();
   const pdfData = await pdf(dataBuffer);
@@ -69,6 +71,22 @@ server.get("/resumes/:id", async (request, reply) => {
   }
 
   reply.status(200).send(resume);
+});
+
+server.put("/resumes/:id", async (request, reply) => {
+  const { id } = request.params as { id: string };
+  const data = await request.body;
+
+  if (data === undefined) {
+    reply.status(400).send({ error: "No file uploaded" });
+    return;
+  }
+
+  request.log.info(`Updating resume with ID: ${id}`);
+
+  const updatedResume = await updateResume(id, data as Partial<NewResume>);
+
+  reply.status(200).send(updatedResume[0]);
 });
 
 server.listen({ port: 8080 }, (err, address) => {

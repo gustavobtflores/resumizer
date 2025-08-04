@@ -6,6 +6,14 @@ export function createResume(resume: NewResume) {
   return db.insert(resumesTable).values(resume).returning();
 }
 
+export function updateResume(id: string, resume: Partial<NewResume>) {
+  return db
+    .update(resumesTable)
+    .set({ original_json: resume })
+    .where(eq(resumesTable.id, id))
+    .returning();
+}
+
 export function findAllResumes() {
   return db.select().from(resumesTable);
 }

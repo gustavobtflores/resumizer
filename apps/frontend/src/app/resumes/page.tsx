@@ -1,4 +1,5 @@
 import Container from "@/components/layout/Container";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { StructuredResume } from "@/types/StructuredResume";
+import { BriefcaseBusiness, File } from "lucide-react";
 import Link from "next/link";
 
 export default async function Resumes() {
@@ -19,7 +21,21 @@ export default async function Resumes() {
 
   return (
     <Container className="mt-20">
-      <h1 className="text-2xl font-semibold mb-10">Currículos</h1>
+      <div className="flex items-center justify-between mb-10">
+        <h1 className="text-2xl font-semibold">Currículos</h1>
+        <div className="flex items-center gap-2">
+          <Link href="/resumes/new">
+            <Button className="cursor-pointer">
+              <File />
+              Adicionar currículo
+            </Button>
+          </Link>
+          <Button variant={"outline"}>
+            <BriefcaseBusiness />
+            Adicionar descrição
+          </Button>
+        </div>
+      </div>
       <ul className="grid grid-cols-4 gap-4">
         {resumes.map((resume) => (
           <li key={resume.id}>

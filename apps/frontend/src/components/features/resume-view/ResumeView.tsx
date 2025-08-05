@@ -56,10 +56,10 @@ export default function Resume({
   }
 
   return (
-    <Container className="max-w-full w-full px-0!">
-      <div className="h-20"></div>
-      <div className="grid grid-cols-3">
-        <div className="py-4 flex flex-col border-border border border-l-0 border-b-0 rounded-sm rounded-b-none max-w-96 print:hidden">
+    <Container className="flex flex-col max-w-full w-full px-0! h-screen">
+      <div className="h-20 absolute"></div>
+      <div className="grid grid-cols-3 h-full pt-20 print:p-0">
+        <div className="py-4 flex flex-col border-border border border-l-0 border-b-0 rounded-sm rounded-b-none max-w-96 print:hidden overflow-auto">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -110,7 +110,6 @@ export default function Resume({
                         <Controller
                           control={form.control}
                           name={`education.${index}.institution`}
-                          defaultValue={edu.institution}
                           render={({ field }) => (
                             <Input
                               type="text"
@@ -124,11 +123,6 @@ export default function Resume({
                           <Controller
                             control={form.control}
                             name={`education.${index}.start_date`}
-                            defaultValue={
-                              new Date(edu.start_date)
-                                .toISOString()
-                                .split("T")[0]
-                            }
                             render={({ field }) => (
                               <Input
                                 type="date"
@@ -141,11 +135,6 @@ export default function Resume({
                           <Controller
                             control={form.control}
                             name={`education.${index}.graduation_date`}
-                            defaultValue={
-                              new Date(edu.graduation_date)
-                                .toISOString()
-                                .split("T")[0]
-                            }
                             render={({ field }) => (
                               <Input
                                 type="date"
@@ -159,7 +148,6 @@ export default function Resume({
                         <Controller
                           control={form.control}
                           name={`education.${index}.relevant_coursework`}
-                          defaultValue={edu.relevant_coursework}
                           render={({ field }) => (
                             <Textarea
                               placeholder="Disciplinas relevantes"
@@ -198,7 +186,6 @@ export default function Resume({
                           key={field.key}
                           name={`personal_info.${field.key}`}
                           control={form.control}
-                          defaultValue={resume.personal_info[field.key]}
                           render={({ field: controllerField }) => (
                             <Input
                               placeholder={field.label}

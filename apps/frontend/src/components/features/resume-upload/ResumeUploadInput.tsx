@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { redirect } from "next/navigation";
 
 export function ResumeUploadInput() {
   const [file, setFile] = useState<File | null>(null);
@@ -25,7 +26,8 @@ export function ResumeUploadInput() {
         if (!response.ok) {
           throw new Error("Erro ao enviar o arquivo");
         }
-        return response.json();
+
+        redirect("/resumes");
       })
       .then((data) => {
         console.log("Currículo enviado com sucesso:", data);

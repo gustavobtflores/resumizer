@@ -34,7 +34,6 @@ export function WorkExperienceForm({
         <Controller
           name={`work_experience.${index}.start_date`}
           control={control}
-          defaultValue={new Date(exp.start_date).toISOString().split("T")[0]}
           render={({ field }) => (
             <Input
               type="date"
@@ -47,7 +46,6 @@ export function WorkExperienceForm({
         <Controller
           name={`work_experience.${index}.end_date`}
           control={control}
-          defaultValue={exp.end_date}
           disabled={
             formValues.work_experience?.[index].is_current ??
             workExperience?.[index].is_current
@@ -65,7 +63,6 @@ export function WorkExperienceForm({
       <Controller
         name={`work_experience.${index}.is_current`}
         control={control}
-        defaultValue={exp.is_current}
         render={({ field }) => (
           <div className="flex items-center gap-3 my-4">
             <Checkbox checked={field.value} onCheckedChange={field.onChange} />
@@ -76,7 +73,6 @@ export function WorkExperienceForm({
       <Controller
         name={`work_experience.${index}.achievements`}
         control={control}
-        defaultValue={exp.achievements}
         render={({ field }) => (
           <Textarea
             placeholder="Conquistas"

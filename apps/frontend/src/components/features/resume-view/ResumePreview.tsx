@@ -9,7 +9,7 @@ function Experiences({
 }) {
   return (
     <section className="mt-10">
-      <h2 className="text-base border-b border-b-border pb-2 mb-4">
+      <h2 className="text-base border-b print:border-b-zinc-200 border-b-border pb-2 mb-4">
         Experiências
       </h2>
       {experiences.map((exp, index) => (
@@ -44,7 +44,7 @@ function Education({
 }) {
   return (
     <section className="mt-10">
-      <h2 className="text-base border-b border-b-border pb-2 mb-4">
+      <h2 className="text-base border-b border-b-border print:border-b-zinc-200 pb-2 mb-4">
         Formação acadêmica
       </h2>
       {education.map((edu, index) => (
@@ -75,7 +75,7 @@ export function ResumePreview({ resume }: { resume: StructuredResume }) {
     .filter((item) => Boolean(item.url));
 
   return (
-    <div className="px-4 col-span-2 print:col-span-3">
+    <div className="px-4 col-span-2 print:col-span-3 overflow-auto pb-8">
       <div className="bg-secondary rounded-sm col-span-2 max-w-full w-[21cm] h-[29.7cm] p-8 print:p-0">
         <h1 className="text-3xl font-semibold">
           {resume.personal_info.full_name}

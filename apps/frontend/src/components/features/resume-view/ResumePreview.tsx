@@ -1,5 +1,6 @@
 import { StructuredResume } from "@/types/StructuredResume";
 import { formatDate } from "@/utils/formatDate";
+import { normalizeURL } from "@/utils/normalizeURL";
 import { Fragment } from "react";
 
 function Experiences({
@@ -71,12 +72,17 @@ export function ResumePreview({ resume }: { resume: StructuredResume }) {
       { key: "portfolio_url", label: "Portfolio" },
     ] as const
   )
-    .map((item) => ({ ...item, url: resume.personal_info[item.key] }))
+    .map((item) => ({
+      ...item,
+      url: resume.personal_info[item.key]
+        ? normalizeURL(resume.personal_info[item.key])
+        : undefined,
+    }))
     .filter((item) => Boolean(item.url));
 
   return (
-    <div className="px-4 col-span-2 print:col-span-3 overflow-auto pb-8">
-      <div className="bg-secondary rounded-sm col-span-2 max-w-full w-[21cm] h-[29.7cm] p-8 print:p-0">
+    <div className="px-4 col-span-6 print:col-span-3 overflow-auto py-8 flex justify-center">
+      <div className="bg-secondary col-span-2 max-w-full w-[21cm] h-[29.7cm] p-8 print:p-0">
         <h1 className="text-3xl font-semibold">
           {resume.personal_info.full_name}
         </h1>

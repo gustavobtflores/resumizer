@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { validate as uuidValidate } from "uuid";
 
 import fastify from "fastify";
 import pdf from "pdf-parse";
@@ -9,6 +10,7 @@ import {
 import { extractResumeData } from "./clients/openai/extractResume";
 import {
   createResume,
+  deleteResume,
   findAllResumes,
   findResumeById,
   updateResume,
@@ -63,6 +65,13 @@ server.get("/resumes", async (request, reply) => {
 server.get("/resumes/:id", async (request, reply) => {
   const { id } = request.params as { id: string };
 
+  const isValidUUID = uuidValidate(id);
+
+  if (!isValidUUID) {
+    reply.status(400).send({ error: "Invalid resume ID format" });
+    return;
+  }
+
   const resume = await findResumeById(id);
 
   if (!resume) {
@@ -87,6 +96,21 @@ server.put("/resumes/:id", async (request, reply) => {
   const updatedResume = await updateResume(id, data as Partial<NewResume>);
 
   reply.status(200).send(updatedResume[0]);
+});
+
+server.delete("/resumes/:id", async (request, reply) => {
+  const { id } = request.params as { id: string };
+
+  const resume = await findResumeById(id);
+
+  if (!resume) {
+    reply.status(404).send({ error: "Resume not found" });
+    return;
+  }
+
+  await deleteResume(id);
+
+  reply.status(204).send();
 });
 
 server.listen({ port: 8080 }, (err, address) => {

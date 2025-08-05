@@ -5,15 +5,27 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { redirect } from "next/navigation";
+import { ResumeUploadLoading } from "./ResumeUploadLoading";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Resume from "../resume-view/ResumeView";
 
 export function ResumeUploadInput() {
   const [file, setFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleFileSubmit() {
     if (!file) {
       alert("Por favor, selecione um arquivo.");
       return;
     }
+
+    setIsLoading(true);
 
     const formData = new FormData();
     formData.append("resume", file);
@@ -26,40 +38,64 @@ export function ResumeUploadInput() {
         if (!response.ok) {
           throw new Error("Erro ao enviar o arquivo");
         }
-
-        redirect("/resumes");
       })
       .then((data) => {
         console.log("Currículo enviado com sucesso:", data);
+        redirect("/resumes");
       })
       .catch((error) => {
         console.error("Erro ao enviar o currículo:", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="grid w-full max-w-sm items-center gap-3">
-        <Label htmlFor="resume">Currículo</Label>
-        <Input
-          id="resume"
-          type="file"
-          onChange={(event) => {
-            const files = event.target.files;
-            if (files && files.length > 0) {
-              setFile(files[0]);
-            }
-          }}
-        />
-      </div>
-      {file && (
-        <p>
-          Arquivo selecionado: {file.name} ({(file.size / 1024).toFixed(2)} KB)
-        </p>
+    <Card className="w-lg">
+      {!isLoading ? (
+        <CardContent>
+          <ResumeUploadLoading />
+        </CardContent>
+      ) : (
+        <>
+          <CardHeader>
+            <CardTitle>Faça o upload do seu currículo</CardTitle>
+            <CardDescription>
+              Selecione o arquivo do seu currículo para começar.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-4">
+              <div className="grid w-full max-w-sm items-center gap-3">
+                <Label htmlFor="resume">Currículo</Label>
+                <Input
+                  id="resume"
+                  type="file"
+                  onChange={(event) => {
+                    const files = event.target.files;
+                    if (files && files.length > 0) {
+                      setFile(files[0]);
+                    }
+                  }}
+                />
+              </div>
+              {file && (
+                <p>
+                  Arquivo selecionado: {file.name} (
+                  {(file.size / 1024).toFixed(2)} KB)
+                </p>
+              )}
+              <Button
+                className="self-end cursor-pointer"
+                onClick={handleFileSubmit}
+              >
+                Continuar
+              </Button>
+            </div>
+          </CardContent>
+        </>
       )}
-      <Button className="self-end cursor-pointer" onClick={handleFileSubmit}>
-        Continuar
-      </Button>
-    </div>
+    </Card>
   );
 }

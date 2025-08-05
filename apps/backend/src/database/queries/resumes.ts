@@ -14,6 +14,10 @@ export function updateResume(id: string, resume: Partial<NewResume>) {
     .returning();
 }
 
+export function deleteResume(id: string) {
+  return db.delete(resumesTable).where(eq(resumesTable.id, id));
+}
+
 export function findAllResumes() {
   return db.select().from(resumesTable);
 }

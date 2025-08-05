@@ -57,9 +57,8 @@ export default function Resume({
 
   return (
     <Container className="flex flex-col max-w-full w-full px-0! h-screen">
-      <div className="h-20 absolute"></div>
-      <div className="grid grid-cols-3 h-full pt-20 print:p-0">
-        <div className="py-4 flex flex-col border-border border border-l-0 border-b-0 rounded-sm rounded-b-none max-w-96 print:hidden overflow-auto">
+      <div className="grid grid-cols-8 h-full print:p-0">
+        <div className="py-4 flex flex-col border-r border-r-border col-span-2 print:hidden overflow-auto">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}

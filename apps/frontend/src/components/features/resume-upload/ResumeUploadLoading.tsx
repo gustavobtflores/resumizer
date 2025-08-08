@@ -31,8 +31,7 @@ export const loadingPhrases: string[] = [
 ];
 const progress = [0, 13, 26, 39, 52, 65, 78, 91];
 
-export function ResumeUploadLoading() {
-  const [isDone, setIsDone] = useState(false);
+export function ResumeUploadLoading({ isDone = false }: { isDone: boolean }) {
   const [progressStep, setProgressStep] = useState(0);
 
   useEffect(() => {
@@ -40,14 +39,12 @@ export function ResumeUploadLoading() {
 
     const interval = setInterval(() => {
       if (currentIndex < progress.length) {
-        setIsDone(false);
         setProgressStep(progress[currentIndex]);
         currentIndex++;
       } else {
         clearInterval(interval);
-        setIsDone(true);
       }
-    }, 5000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
@@ -64,7 +61,7 @@ export function ResumeUploadLoading() {
         </div>
       </h2>
       <Progress value={isDone ? 100 : progressStep} />
-      <span className="text-secondary-foreground text-sm mt-4">
+      <span className="text-muted-foreground text-sm mt-4">
         Isso pode levar alguns segundos.
       </span>
     </div>

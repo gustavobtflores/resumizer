@@ -1,4 +1,6 @@
-import { resumeSchema } from "../schemas/resume-json";
+import { ZodResumeSchema } from "../schemas/zod/resume";
+
+const resumeSchema = ZodResumeSchema.shape;
 
 export const resumeExtractionPrompt = (
   resumeText: string

@@ -212,3 +212,8 @@ body {
 body {
   letter-spacing: var(--tracking-normal);
 }
+
+body,
+html {
+  height: 100%;
+}

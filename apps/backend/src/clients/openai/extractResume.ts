@@ -12,7 +12,14 @@ export async function extractResumeData(resumeText: string) {
     },
   });
 
-  console.log(response.output_text);
+  const responseJson = JSON.parse(response.output_text);
+  const parsedData = ZodResumeSchema.safeParse(responseJson);
 
-  return response.output_text;
+  if (!parsedData.success) {
+    throw new Error(
+      "Failed to parse extracted resume data: " + parsedData.error.message
+    );
+  }
+
+  return parsedData.data;
 }

@@ -84,4 +84,8 @@ export const ZodResumeSchema = z.object({
       achievements: z.array(z.string()),
     })
   ),
+
+  metadata: z.object({
+    language: z.string().length(5),
+  }),
 });

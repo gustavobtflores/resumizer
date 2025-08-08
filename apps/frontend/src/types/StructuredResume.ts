@@ -6,6 +6,9 @@ export interface StructuredResume {
   certifications: Certification[];
   work_experience: WorkExperience[];
   professional_summary: string;
+  metadata: {
+    language: string;
+  };
 }
 
 interface Skills {

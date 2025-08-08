@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ResumeUploadLoading } from "./ResumeUploadLoading";
 import {
   Card,
@@ -13,11 +13,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Resume from "../resume-view/ResumeView";
 
 export function ResumeUploadInput() {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDone, setIsDone] = useState(false);
+  const router = useRouter();
 
   async function handleFileSubmit() {
     if (!file) {
@@ -41,21 +42,20 @@ export function ResumeUploadInput() {
       })
       .then((data) => {
         console.log("Currículo enviado com sucesso:", data);
-        redirect("/resumes");
+        setIsDone(true);
+        router.push("/resumes");
       })
       .catch((error) => {
         console.error("Erro ao enviar o currículo:", error);
-      })
-      .finally(() => {
         setIsLoading(false);
       });
   }
 
   return (
     <Card className="w-lg">
-      {!isLoading ? (
+      {isLoading ? (
         <CardContent>
-          <ResumeUploadLoading />
+          <ResumeUploadLoading isDone={isDone} />
         </CardContent>
       ) : (
         <>

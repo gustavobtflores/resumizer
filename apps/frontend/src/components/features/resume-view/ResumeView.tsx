@@ -16,17 +16,26 @@ import { Controller, useForm } from "react-hook-form";
 import { ResumePreview } from "./ResumePreview";
 import { PersonalInfoForm } from "./PersonalInfoForm";
 import { WorkExperienceForm } from "./WorkExperienceForm";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { useEffect } from "react";
+import { ResumeLocaleChange } from "./ResumeLocaleChange";
+import { FileDown } from "lucide-react";
 
 export default function Resume({
   resumeData,
 }: {
-  resumeData: { id: string; original_json: StructuredResume };
+  resumeData: { id: string; translated_json: StructuredResume };
 }) {
-  const { original_json: resume } = resumeData;
+  const resume = resumeData.translated_json;
   const form = useForm({
     defaultValues: resume,
   });
   const formValues = form.watch();
+
+  useEffect(() => {
+    form.reset(resume);
+  }, [form, resume]);
 
   function onSubmit(data: Partial<StructuredResume>) {
     const updatedResume = {
@@ -55,16 +64,45 @@ export default function Resume({
       });
   }
 
+  function handleResumeDownload() {
+    fetch("/api/resume.pdf", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(resume),
+    })
+      .then((response) => {
+        return response.blob();
+      })
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "resume.pdf";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      });
+  }
+
   return (
     <Container className="flex flex-col max-w-full w-full px-0! h-screen">
       <div className="grid grid-cols-8 h-full print:p-0">
         <div className="py-4 flex flex-col border-r border-r-border col-span-2 print:hidden overflow-auto">
+          <div className="px-4">
+            <div className="flex items-center gap-4 mb-4">
+              <Switch id="see-original" />
+              <Label htmlFor="see-original">Ver currículo original</Label>
+            </div>
+            <ResumeLocaleChange />
+          </div>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col gap-8"
             >
-              <Accordion type="multiple" defaultValue={["personal-info"]}>
+              <Accordion type="multiple">
                 <AccordionItem value="personal-info" className="px-4">
                   <AccordionTrigger>
                     <strong>Informações pessoais</strong>
@@ -198,7 +236,16 @@ export default function Resume({
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-              <div className="px-4 self-end mt-2">
+              <div className="flex items-center px-4 self-end mt-2">
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  className="mr-2"
+                  onClick={handleResumeDownload}
+                >
+                  <FileDown />
+                  Baixar PDF
+                </Button>
                 <Button type="submit">Salvar</Button>
               </div>
             </form>

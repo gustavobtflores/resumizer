@@ -19,13 +19,17 @@ import { WorkExperienceForm } from "./WorkExperienceForm";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useEffect } from "react";
-import { ResumeLocaleChange } from "./ResumeLocaleChange";
+import { ResumeLanguageChange } from "./ResumeLanguageChange";
 import { FileDown } from "lucide-react";
 
 export default function Resume({
   resumeData,
 }: {
-  resumeData: { id: string; translated_json: StructuredResume };
+  resumeData: {
+    id: string;
+    translated_json: StructuredResume;
+    available_languages: ("pt-BR" | "en-US" | "es-ES")[];
+  };
 }) {
   const resume = resumeData.translated_json;
   const form = useForm({
@@ -95,7 +99,10 @@ export default function Resume({
               <Switch id="see-original" />
               <Label htmlFor="see-original">Ver currículo original</Label>
             </div>
-            <ResumeLocaleChange />
+            <ResumeLanguageChange
+              resumeId={resumeData.id}
+              availableLanguages={resumeData.available_languages}
+            />
           </div>
           <Form {...form}>
             <form

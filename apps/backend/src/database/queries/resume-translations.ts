@@ -9,6 +9,16 @@ export function createResumeTranslation(translation: NewResumeTranslation) {
   return db.insert(resumeTranslationsTable).values(translation).returning();
 }
 
+export async function findResumeTranslationById(id: string) {
+  const data = await db
+    .select()
+    .from(resumeTranslationsTable)
+    .where(eq(resumeTranslationsTable.id, id))
+    .limit(1);
+
+  return data[0];
+}
+
 export async function findResumeTranslationByIdAndLanguage(
   id: string,
   language: string

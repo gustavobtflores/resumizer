@@ -192,16 +192,20 @@ body {
 
 @theme {
   --animate-bounce: bounce 2s infinite;
+  --animate-spin-once: spin 1s ease-in-out;
 
   @keyframes bounce {
     0% {
       transform: translateY(0);
     }
     25% {
-      transform: translateY(-5px);
+      transform: translateY(-7.5px);
     }
     50% {
       transform: translateY(0);
+    }
+    75% {
+      transform: translateY(-7.5px) scale(1.5);
     }
     100% {
       transform: translateY(0);

@@ -17,6 +17,7 @@ import { NewResume } from "./database/schema/resumes";
 import { CreateJobSchema } from "./utils/schemas/zod/create-job";
 import {
   createResumeTranslation,
+  findResumeTranslationById,
   findResumeTranslationByIdAndLanguage,
   findResumeTranslationsById,
 } from "./database/queries/resume-translations";
@@ -101,7 +102,10 @@ server.get("/resumes/:id", async (request, reply) => {
 
   const languages = await findResumeTranslationsById(id);
 
-  reply.status(200).send(resume);
+  reply.status(200).send({
+    ...resume,
+    available_languages: languages.map((lang) => lang.language),
+  });
 });
 
 server.put("/resumes/:id", async (request, reply) => {
@@ -139,7 +143,7 @@ server.post("/resumes/:id/translations", async (request, reply) => {
     return;
   }
 
-  const resume = await findResumeById(id);
+  const resume = await findResumeTranslationById(id);
 
   if (!resume) {
     reply.status(404).send({ error: "Resume not found" });
@@ -151,8 +155,10 @@ server.post("/resumes/:id/translations", async (request, reply) => {
     targetLanguage
   );
 
+  console.log(translatedResume);
+
   const createdTranslatedResume = await createResumeTranslation({
-    resume_id: id,
+    resume_id: resume.resume_id,
     language: targetLanguage,
     translated_json: translatedResume,
   });

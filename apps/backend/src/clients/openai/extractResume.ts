@@ -2,10 +2,11 @@ import { zodTextFormat } from "openai/helpers/zod";
 import { resumeExtractionPrompt } from "../../utils/prompts/resume";
 import { openaiClient } from "./openai";
 import { ZodResumeSchema } from "../../utils/schemas/zod/resume";
+import { gptDefaultModel } from "./model";
 
 export async function extractResumeData(resumeText: string) {
   const response = await openaiClient.responses.create({
-    model: "gpt-4.1",
+    model: gptDefaultModel,
     input: resumeExtractionPrompt(resumeText),
     text: {
       format: zodTextFormat(ZodResumeSchema, "resume"),

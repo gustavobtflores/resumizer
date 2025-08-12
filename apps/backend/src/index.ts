@@ -24,49 +24,69 @@ import {
 import { translateResume } from "./clients/openai/translateResume";
 import { Resume } from "./types/resume";
 import { Languages, supportedLanguages } from "./types/languages";
+import { uploadFileToS3 } from "./clients/s3/functions/upload";
+import path from "path";
 
 const server = fastify({
   logger: true,
 });
 
-server.register(import("@fastify/multipart"));
+server.register(import("@fastify/multipart"), {
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+});
 server.register(cors, {
   origin: "http://localhost:3000",
   methods: ["GET", "POST", "PUT"],
 });
 
 server.post("/resumes", async (request, reply) => {
-  const data = await request.file();
+  try {
+    const data = await request.file();
 
-  if (data === undefined) {
-    reply.status(400).send({ error: "No file uploaded" });
-    return;
+    if (data === undefined) {
+      reply.status(400).send({ error: "No file uploaded" });
+      return;
+    }
+
+    request.log.info(`Extracting information from PDF: ${data.filename}`);
+
+    const dataBuffer = await data.toBuffer();
+    const pdfData = await pdf(dataBuffer);
+
+    if (!pdfData.text) {
+      reply.status(400).send({ error: "No text extracted from PDF" });
+      return;
+    }
+
+    console.log(
+      data.fieldname + "-" + Date.now() + path.extname(data.filename)
+    );
+
+    await uploadFileToS3(
+      `${data.fieldname + "-" + Date.now() + path.extname(data.filename)}`,
+      dataBuffer,
+      data.mimetype
+    );
+
+    const cleanedText = cleanResumeText(pdfData.text);
+    const extractedData = await extractResumeData(cleanedText);
+
+    const createdResume = await createResume({
+      original_json: extractedData,
+    });
+
+    const createdTranslation = await createResumeTranslation({
+      resume_id: createdResume[0].id,
+      language: extractedData.metadata.language,
+      translated_json: extractedData,
+    });
+
+    reply.status(200).send(createdTranslation);
+  } catch (error) {
+    console.error(error);
   }
-
-  request.log.info(`Extracting information from PDF: ${data.filename}`);
-
-  const dataBuffer = await data.toBuffer();
-  const pdfData = await pdf(dataBuffer);
-
-  if (!pdfData.text) {
-    reply.status(400).send({ error: "No text extracted from PDF" });
-    return;
-  }
-
-  const cleanedText = cleanResumeText(pdfData.text);
-  const extractedData = await extractResumeData(cleanedText);
-
-  const createdResume = await createResume({
-    original_json: extractedData,
-  });
-
-  const createdTranslation = await createResumeTranslation({
-    resume_id: createdResume[0].id,
-    language: extractedData.metadata.language,
-    translated_json: extractedData,
-  });
-
-  reply.status(200).send(createdResume);
 });
 
 server.get("/resumes", async (request, reply) => {

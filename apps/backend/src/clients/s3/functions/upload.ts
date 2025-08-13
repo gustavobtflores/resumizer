@@ -7,7 +7,7 @@ export async function uploadFileToS3(
   body: Buffer | Readable,
   contentType?: string
 ) {
-  await s3Client.send(
+  return await s3Client.send(
     new PutObjectCommand({
       Bucket: process.env.S3_BUCKET,
       Key: key,

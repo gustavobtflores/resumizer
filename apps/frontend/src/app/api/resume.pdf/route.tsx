@@ -1,4 +1,3 @@
-// app/api/resume.pdf/route.ts
 import "server-only";
 import React from "react";
 import { NextRequest } from "next/server";
@@ -56,16 +55,19 @@ const sectionTitles = {
     experiences: "Experiências",
     education: "Formação acadêmica",
     professionalSummary: "Resumo Profissional",
+    current: "Atual",
   },
   "en-US": {
-    experiences: "Experiences",
+    experiences: "Professional Experience",
     education: "Education",
     professionalSummary: "Professional Summary",
+    current: "Present",
   },
   "es-ES": {
     experiences: "Experiencias",
     education: "Educación",
     professionalSummary: "Resumen Profesional",
+    current: "Actual",
   },
 };
 
@@ -97,7 +99,7 @@ function SocialLine({ resume }: { resume: StructuredResume }) {
     if (parts.length)
       parts.push(
         <Text key="sep1" style={styles.sep}>
-          •
+          |
         </Text>
       );
     parts.push(
@@ -111,7 +113,7 @@ function SocialLine({ resume }: { resume: StructuredResume }) {
     if (parts.length)
       parts.push(
         <Text key={`sep-${i}`} style={styles.sep}>
-          •
+          |
         </Text>
       );
     parts.push(
@@ -126,19 +128,23 @@ function SocialLine({ resume }: { resume: StructuredResume }) {
 
 function ExperiencesPDF({
   experiences,
+  lang,
 }: {
   experiences: StructuredResume["work_experience"];
+  lang: "pt-BR" | "en-US" | "es-ES";
 }) {
   return (
     <View style={{ marginTop: 12 }}>
-      <Text style={styles.sectionTitle}>Experiências</Text>
+      <Text style={styles.sectionTitle}>{sectionTitles[lang].experiences}</Text>
       {experiences.map((exp, index) => (
         <View key={index} style={styles.expWrap}>
           <View style={styles.expHeader}>
             <Text style={styles.h3}>{exp.position}</Text>
             <Text style={styles.muted}>
               {formatDate(exp.start_date)} –{" "}
-              {exp.is_current ? "Atual" : formatDate(exp.end_date)}
+              {exp.is_current
+                ? sectionTitles[lang].current
+                : formatDate(exp.end_date)}
             </Text>
           </View>
           <Text style={styles.muted}>{exp.company}</Text>
@@ -160,18 +166,20 @@ function ExperiencesPDF({
 
 function EducationPDF({
   education,
+  lang,
 }: {
   education: StructuredResume["education"];
+  lang: "pt-BR" | "en-US" | "es-ES";
 }) {
   return (
     <View style={{ marginTop: 12 }}>
-      <Text style={styles.sectionTitle}>Formação acadêmica</Text>
+      <Text style={styles.sectionTitle}>{sectionTitles[lang].education}</Text>
       {education.map((edu, index) => (
         <View key={index} style={{ marginBottom: 6 }}>
           <View style={styles.expHeader}>
             <Text style={styles.h3}>{edu.field_of_study}</Text>
             <Text style={styles.muted}>
-              {formatDate(edu.start_date)} – {formatDate(edu.graduation_date)}
+              {formatDate(edu.start_date)} - {formatDate(edu.graduation_date)}
             </Text>
           </View>
           <Text style={styles.muted}>{edu.institution}</Text>
@@ -186,7 +194,28 @@ function EducationPDF({
   );
 }
 
-function ResumePDF({ resume }: { resume: StructuredResume }) {
+function SkillsPDF({ skills }: { skills: StructuredResume["skills"] }) {
+  return (
+    <View style={{ marginTop: 12 }}>
+      <Text style={styles.sectionTitle}>Skills</Text>
+      <View style={styles.rowWrap}>
+        {skills.technical_skills.map((skill, index) => (
+          <Text key={index} style={styles.line}>
+            {skill} |{" "}
+          </Text>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+function ResumePDF({
+  resume,
+  lang,
+}: {
+  resume: StructuredResume;
+  lang: "pt-BR" | "en-US" | "es-ES";
+}) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -198,13 +227,16 @@ function ResumePDF({ resume }: { resume: StructuredResume }) {
 
         {resume.professional_summary ? (
           <View style={{ marginTop: 12 }}>
-            <Text style={styles.sectionTitle}>Resumo Profissional</Text>
+            <Text style={styles.sectionTitle}>
+              {sectionTitles[lang].professionalSummary}
+            </Text>
             <Text style={styles.line}>{resume.professional_summary}</Text>
           </View>
         ) : null}
 
-        <ExperiencesPDF experiences={resume.work_experience} />
-        <EducationPDF education={resume.education} />
+        <ExperiencesPDF experiences={resume.work_experience} lang={lang} />
+        <EducationPDF education={resume.education} lang={lang} />
+        <SkillsPDF skills={resume.skills} />
       </Page>
     </Document>
   );
@@ -224,7 +256,14 @@ export async function POST(req: NextRequest) {
   if (!Array.isArray(resume?.education))
     return new Response("Missing education[]", { status: 400 });
 
-  const buffer = await renderToBuffer(<ResumePDF resume={resume} />);
+  console.log(resume);
+
+  const buffer = await renderToBuffer(
+    <ResumePDF
+      resume={resume}
+      lang={resume.metadata.language as "pt-BR" | "en-US" | "es-ES"}
+    />
+  );
 
   return new Response(buffer, {
     status: 200,

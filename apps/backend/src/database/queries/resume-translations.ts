@@ -47,3 +47,16 @@ export async function findResumeTranslationsById(id: string) {
 
   return data;
 }
+
+export async function updateResumeTranslation(
+  id: string,
+  data: Partial<NewResumeTranslation>
+) {
+  const result = await db
+    .update(resumeTranslationsTable)
+    .set(data)
+    .where(eq(resumeTranslationsTable.id, id))
+    .returning();
+
+  return result[0];
+}

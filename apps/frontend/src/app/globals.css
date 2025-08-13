@@ -196,18 +196,23 @@ body {
 
   @keyframes bounce {
     0% {
+      opacity: 0.5;
       transform: translateY(0);
     }
     25% {
+      opacity: 1;
       transform: translateY(-7.5px);
     }
     50% {
+      opacity: 0.5;
       transform: translateY(0);
     }
     75% {
+      opacity: 1;
       transform: translateY(-7.5px) scale(1.5);
     }
     100% {
+      opacity: 0.5;
       transform: translateY(0);
     }
   }

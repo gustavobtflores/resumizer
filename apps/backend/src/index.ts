@@ -20,12 +20,14 @@ import {
   findResumeTranslationById,
   findResumeTranslationByIdAndLanguage,
   findResumeTranslationsById,
+  updateResumeTranslation,
 } from "./database/queries/resume-translations";
 import { translateResume } from "./clients/openai/translateResume";
 import { Resume } from "./types/resume";
 import { Languages, supportedLanguages } from "./types/languages";
 import { uploadFileToS3 } from "./clients/s3/functions/upload";
 import path from "path";
+import { NewResumeTranslation } from "./database/schema/resume-translations";
 
 const server = fastify({
   logger: true,
@@ -64,17 +66,18 @@ server.post("/resumes", async (request, reply) => {
       data.fieldname + "-" + Date.now() + path.extname(data.filename)
     );
 
-    await uploadFileToS3(
-      `${data.fieldname + "-" + Date.now() + path.extname(data.filename)}`,
-      dataBuffer,
-      data.mimetype
-    );
+    const s3Filename = `${
+      path.parse(data.filename).name
+    }-${Date.now()}${path.extname(data.filename)}`;
+
+    await uploadFileToS3(s3Filename, dataBuffer, data.mimetype);
 
     const cleanedText = cleanResumeText(pdfData.text);
     const extractedData = await extractResumeData(cleanedText);
 
     const createdResume = await createResume({
       original_json: extractedData,
+      file_path: s3Filename,
     });
 
     const createdTranslation = await createResumeTranslation({
@@ -132,16 +135,18 @@ server.put("/resumes/:id", async (request, reply) => {
   const { id } = request.params as { id: string };
   const data = await request.body;
 
+  console.log(id);
+
   if (data === undefined) {
-    reply.status(400).send({ error: "No file uploaded" });
+    reply.status(400).send({ error: "Missing data to update resume" });
     return;
   }
 
-  request.log.info(`Updating resume with ID: ${id}`);
+  const updatedResume = await updateResumeTranslation(id, {
+    translated_json: data,
+  });
 
-  const updatedResume = await updateResume(id, data as Partial<NewResume>);
-
-  reply.status(200).send(updatedResume[0]);
+  reply.status(200).send(updatedResume);
 });
 
 server.post("/resumes/:id/translations", async (request, reply) => {

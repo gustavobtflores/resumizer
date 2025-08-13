@@ -27,7 +27,6 @@ import { Resume } from "./types/resume";
 import { Languages, supportedLanguages } from "./types/languages";
 import { uploadFileToS3 } from "./clients/s3/functions/upload";
 import path from "path";
-import { NewResumeTranslation } from "./database/schema/resume-translations";
 
 const server = fastify({
   logger: true,
@@ -40,7 +39,7 @@ server.register(import("@fastify/multipart"), {
 });
 server.register(cors, {
   origin: "http://localhost:3000",
-  methods: ["GET", "POST", "PUT"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
 });
 
 server.post("/resumes", async (request, reply) => {

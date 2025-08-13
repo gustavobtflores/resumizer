@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} antialiased`}>
         <Header />
-        {children}
+        <div className="pt-20">{children}</div>
       </body>
     </html>
   );

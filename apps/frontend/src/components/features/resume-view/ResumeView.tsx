@@ -16,8 +16,6 @@ import { Controller, useForm } from "react-hook-form";
 import { ResumePreview } from "./ResumePreview";
 import { PersonalInfoForm } from "./PersonalInfoForm";
 import { WorkExperienceForm } from "./WorkExperienceForm";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { useEffect } from "react";
 import { ResumeLanguageChange } from "./ResumeLanguageChange";
 import { FileDown } from "lucide-react";
@@ -91,10 +89,10 @@ export default function Resume({
   }
 
   return (
-    <Container className="flex flex-col max-w-full w-full px-0! h-screen">
-      <div className="grid grid-cols-8 h-full print:p-0">
-        <div className="py-4 flex flex-col border-r border-r-border col-span-2 print:hidden overflow-auto">
-          <div className="px-4">
+    <Container className="flex flex-col w-full px-0! h-screen">
+      <div className="grid grid-cols-8">
+        <div className="py-4 flex flex-col border border-border col-span-2 overflow-auto ml-8 mt-8 rounded-lg shadow h-[80dvh] sticky top-28">
+          <div className="px-4 border-b border-b-border pb-4">
             <ResumeLanguageChange
               resumeId={resumeData.id}
               availableLanguages={resumeData.available_languages}

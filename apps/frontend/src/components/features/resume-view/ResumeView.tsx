@@ -95,10 +95,6 @@ export default function Resume({
       <div className="grid grid-cols-8 h-full print:p-0">
         <div className="py-4 flex flex-col border-r border-r-border col-span-2 print:hidden overflow-auto">
           <div className="px-4">
-            <div className="flex items-center gap-4 mb-4">
-              <Switch id="see-original" />
-              <Label htmlFor="see-original">Ver currículo original</Label>
-            </div>
             <ResumeLanguageChange
               resumeId={resumeData.id}
               availableLanguages={resumeData.available_languages}

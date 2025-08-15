@@ -41,7 +41,13 @@ export function ResumeItem({
     <li key={resume.id}>
       <div className="flex gap-4">
         <div className="border border-border rounded-lg overflow-hidden shadow-lg shrink-0">
-          <Image src={"/fixture/resume.png"} width={200} height={300} alt="" />
+          <Image
+            src={"/fixture/resume.png"}
+            width={200}
+            height={300}
+            alt=""
+            style={{ clipPath: "inset(1px)" }}
+          />
         </div>
         <div className="flex flex-col">
           <strong className="font-medium text-lg mb-1">

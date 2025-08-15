@@ -3,7 +3,7 @@ import { db } from "..";
 import {
   NewResumeTranslation,
   resumeTranslationsTable,
-} from "../schema/resume-translations";
+} from "../../../drizzle/schema/resume-translations";
 
 export function createResumeTranslation(translation: NewResumeTranslation) {
   return db.insert(resumeTranslationsTable).values(translation).returning();

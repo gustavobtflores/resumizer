@@ -1,0 +1,218 @@
+import { FastifyInstance } from "fastify";
+import path from "path";
+import pdf from "pdf-parse";
+import { validate as uuidValidate } from "uuid";
+import { uploadFileToS3 } from "../../clients/s3/functions/upload";
+import {
+  createResumeTranslation,
+  findResumeTranslationByIdAndLanguage,
+  findResumeTranslationsById,
+  updateResumeTranslation,
+  findResumeTranslationById,
+} from "../../database/queries/resume-translations";
+import {
+  createResume,
+  findAllResumes,
+  findResumeById,
+  deleteResume,
+} from "../../database/queries/resumes";
+import { Languages, supportedLanguages } from "../../types/languages";
+import { Resume } from "../../types/resume";
+import { CreateJobSchema } from "../../utils/schemas/zod/create-job";
+import { extractResumeToJson, translateResumeToJson } from "./service";
+
+export default async function resumes(fastify: FastifyInstance) {
+  fastify.post("/resumes", async (request, reply) => {
+    try {
+      const data = await request.file();
+
+      if (data === undefined) {
+        reply.status(400).send({ error: "No file uploaded" });
+        return;
+      }
+
+      const dataBuffer = await data.toBuffer();
+      const pdfData = await pdf(dataBuffer);
+
+      if (!pdfData.text) {
+        reply.status(400).send({ error: "No text extracted from PDF" });
+        return;
+      }
+
+      const s3Filename = `${
+        path.parse(data.filename).name
+      }-${Date.now()}${path.extname(data.filename)}`;
+
+      await uploadFileToS3(s3Filename, dataBuffer, data.mimetype);
+
+      const extractedData = await extractResumeToJson(fastify, pdfData);
+
+      const createdResume = await createResume({
+        original_json: extractedData,
+        file_path: s3Filename,
+      });
+
+      const createdTranslation = await createResumeTranslation({
+        resume_id: createdResume[0].id,
+        language: extractedData.metadata.language,
+        translated_json: extractedData,
+      });
+
+      reply.status(200).send(createdTranslation);
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+  fastify.get("/resumes", async (request, reply) => {
+    const resumes = await findAllResumes();
+
+    reply.status(200).send(resumes);
+  });
+
+  fastify.get("/resumes/:id", async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const { language } = request.query as { language?: Languages };
+
+    const isValidUUID = uuidValidate(id);
+
+    if (!isValidUUID) {
+      reply.status(400).send({ error: "Invalid resume ID format" });
+      return;
+    }
+
+    if (language && !supportedLanguages.includes(language as Languages)) {
+      reply.status(400).send({ error: "Unsupported language" });
+      return;
+    }
+
+    const resume = language
+      ? await findResumeTranslationByIdAndLanguage(id, language)
+      : await findResumeById(id);
+
+    if (!resume) {
+      reply.status(404).send({ error: "Resume not found" });
+      return;
+    }
+
+    const languages = await findResumeTranslationsById(id);
+
+    reply.status(200).send({
+      ...resume,
+      available_languages: languages.map((lang) => lang.language),
+    });
+  });
+
+  fastify.put("/resumes/:id", async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const data = await request.body;
+
+    if (data === undefined) {
+      reply.status(400).send({ error: "Missing data to update resume" });
+      return;
+    }
+
+    const updatedResume = await updateResumeTranslation(id, {
+      translated_json: data,
+    });
+
+    reply.status(200).send(updatedResume);
+  });
+
+  fastify.post("/resumes/:id/translations", async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const { targetLanguage } = request.body as { targetLanguage: Languages };
+
+    if (!targetLanguage) {
+      reply.status(400).send({ error: "Target language is required" });
+      return;
+    } else if (!supportedLanguages.includes(targetLanguage)) {
+      reply.status(400).send({ error: "Unsupported target language" });
+      return;
+    }
+
+    const isValidUUID = uuidValidate(id);
+
+    if (!isValidUUID) {
+      reply.status(400).send({ error: "Invalid resume ID format" });
+      return;
+    }
+
+    const resume = await findResumeTranslationById(id);
+
+    if (!resume) {
+      reply.status(404).send({ error: "Resume not found" });
+      return;
+    }
+
+    const translatedResume = await translateResumeToJson(
+      fastify,
+      resume.translated_json as Resume,
+      targetLanguage
+    );
+
+    const createdTranslatedResume = await createResumeTranslation({
+      resume_id: resume.resume_id,
+      language: targetLanguage,
+      translated_json: translatedResume,
+    });
+
+    reply.status(201).send({
+      message: "Resume translated successfully",
+      translation: createdTranslatedResume,
+    });
+  });
+
+  fastify.delete("/resumes/:id", async (request, reply) => {
+    const { id } = request.params as { id: string };
+
+    const resume = await findResumeById(id);
+
+    if (!resume) {
+      reply.status(404).send({ error: "Resume not found" });
+      return;
+    }
+
+    await deleteResume(id);
+
+    reply.status(204).send();
+  });
+
+  fastify.post("/jobs", async (request, reply) => {
+    const body = request.body;
+
+    const bodyParsed = CreateJobSchema.safeParse(body);
+
+    if (!bodyParsed.success) {
+      reply.status(400).send({ error: bodyParsed.error });
+      return;
+    }
+
+    const { resumeId, jobDescription } = bodyParsed.data;
+
+    if (!resumeId || !jobDescription) {
+      reply.status(400).send({ error: "Missing resumeId or jobDescription" });
+      return;
+    }
+
+    const isValidUUID = uuidValidate(resumeId);
+
+    if (!isValidUUID) {
+      reply.status(400).send({ error: "Invalid resume ID format" });
+      return;
+    }
+
+    const resume = await findResumeById(resumeId);
+
+    if (!resume) {
+      reply.status(404).send({ error: "Resume not found" });
+      return;
+    }
+
+    reply.status(201).send({
+      message: "Job description added successfully",
+      resumeId,
+      jobDescription,
+    });
+  });
+}

@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "..";
-import { NewResume, resumesTable } from "../schema/resumes";
-import { resumeTranslationsTable } from "../schema/resume-translations";
+import { NewResume, resumesTable } from "../../../drizzle/schema/resumes";
+import { resumeTranslationsTable } from "../../../drizzle/schema/resume-translations";
 
 export function createResume(resume: NewResume) {
   return db.insert(resumesTable).values(resume).returning();

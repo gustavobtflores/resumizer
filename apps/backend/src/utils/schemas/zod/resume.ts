@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { supportedLanguages } from "../../../types/languages";
 
 export const ZodResumeSchema = z.object({
   personal_info: z.object({
@@ -29,8 +30,8 @@ export const ZodResumeSchema = z.object({
       company: z.string(),
       position: z.string(),
       location: z.string(),
-      start_date: z.string(),
-      end_date: z.string(),
+      start_date: z.coerce.date(),
+      end_date: z.coerce.date(),
       is_current: z.boolean(),
       description: z.string(),
       achievements: z.array(z.string()),
@@ -43,8 +44,8 @@ export const ZodResumeSchema = z.object({
       degree: z.string(),
       field_of_study: z.string(),
       location: z.string(),
-      start_date: z.string(),
-      graduation_date: z.string(),
+      start_date: z.coerce.date(),
+      graduation_date: z.coerce.date(),
       gpa: z.string(),
       honors: z.array(z.string()),
       relevant_coursework: z.array(z.string()),
@@ -78,14 +79,14 @@ export const ZodResumeSchema = z.object({
       name: z.string(),
       description: z.string(),
       technologies_used: z.array(z.string()),
-      start_date: z.string(),
-      end_date: z.string(),
+      start_date: z.coerce.date(),
+      end_date: z.coerce.date(),
       url: z.string(),
       achievements: z.array(z.string()),
     })
   ),
 
   metadata: z.object({
-    language: z.string().length(5),
+    language: z.enum(supportedLanguages),
   }),
 });

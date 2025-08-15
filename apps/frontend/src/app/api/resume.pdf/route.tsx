@@ -256,8 +256,6 @@ export async function POST(req: NextRequest) {
   if (!Array.isArray(resume?.education))
     return new Response("Missing education[]", { status: 400 });
 
-  console.log(resume);
-
   const buffer = await renderToBuffer(
     <ResumePDF
       resume={resume}

@@ -1,12 +1,7 @@
-import { openaiClient } from "./openai";
-import { Resume } from "../../types/resume";
-import { gptDefaultModel } from "./model";
+import { Languages } from "../../types/languages";
 
-export async function translateResume(
-  resumeJson: Resume,
-  targetLanguage: "pt-BR" | "en-US" | "es-ES"
-) {
-  const system = `
+export const resumeTranslationSystemPrompt = (targetLanguage: Languages) =>
+  `
     You translate JSON resume content into ${targetLanguage} using ATS-friendly phrasing.
     Rules (strict):
     1) Preserve structure & keys exactly as provided. Translate values only (strings).
@@ -17,22 +12,3 @@ export async function translateResume(
     6) Safety valves: If text is ambiguous or untranslatable, keep the original value; do not guess.
     7) Output must validate against the provided JSON Schema (strict). No extra fields, comments, or prose.
     `.trim();
-
-  const response = await openaiClient.responses.create({
-    model: gptDefaultModel,
-    input: [
-      {
-        role: "system",
-        content: system,
-      },
-      {
-        role: "user",
-        content: `Target language: ${targetLanguage}\n\nResume JSON:\n${JSON.stringify(
-          resumeJson
-        )}`,
-      },
-    ],
-  });
-
-  return JSON.parse(response.output_text);
-}

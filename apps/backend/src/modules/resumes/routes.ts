@@ -16,10 +16,9 @@ import {
   findResumeById,
   deleteResume,
 } from "../../database/queries/resumes";
-import { Languages, supportedLanguages } from "../../types/languages";
 import { Resume } from "../../types/resume";
-import { CreateJobSchema } from "../../utils/schemas/zod/create-job";
 import { extractResumeToJson, translateResumeToJson } from "./service";
+import { Language, SUPPORTED_LANGUAGES } from "../../constants/languages";
 
 export default async function resumes(fastify: FastifyInstance) {
   fastify.post("/resumes", async (request, reply) => {
@@ -72,7 +71,7 @@ export default async function resumes(fastify: FastifyInstance) {
 
   fastify.get("/resumes/:id", async (request, reply) => {
     const { id } = request.params as { id: string };
-    const { language } = request.query as { language?: Languages };
+    const { language } = request.query as { language?: Language };
 
     const isValidUUID = uuidValidate(id);
 
@@ -81,7 +80,7 @@ export default async function resumes(fastify: FastifyInstance) {
       return;
     }
 
-    if (language && !supportedLanguages.includes(language as Languages)) {
+    if (language && !SUPPORTED_LANGUAGES.includes(language as Language)) {
       reply.status(400).send({ error: "Unsupported language" });
       return;
     }
@@ -121,12 +120,12 @@ export default async function resumes(fastify: FastifyInstance) {
 
   fastify.post("/resumes/:id/translations", async (request, reply) => {
     const { id } = request.params as { id: string };
-    const { targetLanguage } = request.body as { targetLanguage: Languages };
+    const { targetLanguage } = request.body as { targetLanguage: Language };
 
     if (!targetLanguage) {
       reply.status(400).send({ error: "Target language is required" });
       return;
-    } else if (!supportedLanguages.includes(targetLanguage)) {
+    } else if (!SUPPORTED_LANGUAGES.includes(targetLanguage)) {
       reply.status(400).send({ error: "Unsupported target language" });
       return;
     }

@@ -1,11 +1,13 @@
 import { FastifyInstance } from "fastify";
 import { cleanResumeText } from "../../utils/resume-text-cleaner";
 import { Result } from "pdf-parse";
-import { resumeExtractionSystemPrompt } from "../../utils/prompts/resume";
-import { ZodResumeSchema } from "../../utils/schemas/zod/resume";
+import {
+  resumeExtractionSystemPrompt,
+  ZodResumeSchema,
+} from "../../utils/prompts/resume";
 import { Resume } from "../../types/resume";
-import { Languages } from "../../types/languages";
 import { resumeTranslationSystemPrompt } from "../../utils/prompts/translation";
+import { Language } from "../../constants/languages";
 
 export async function extractResumeToJson(app: FastifyInstance, data: Result) {
   const cleanedText = cleanResumeText(data.text);
@@ -21,7 +23,7 @@ export async function extractResumeToJson(app: FastifyInstance, data: Result) {
 export async function translateResumeToJson(
   app: FastifyInstance,
   resumeJson: Resume,
-  targetLanguage: Languages
+  targetLanguage: Language
 ) {
   const result = app.chatJson({
     system: resumeTranslationSystemPrompt(targetLanguage),

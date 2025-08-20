@@ -54,7 +54,6 @@ export const ZodResumeSchema = z.object({
 
   skills: z.object({
     technical_skills: z.array(z.string()),
-    soft_skills: z.array(z.string()),
     languages: z.array(
       z.object({
         language: z.string(),

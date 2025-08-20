@@ -177,42 +177,4 @@ export default async function resumes(fastify: FastifyInstance) {
 
     reply.status(204).send();
   });
-
-  fastify.post("/jobs", async (request, reply) => {
-    const body = request.body;
-
-    const bodyParsed = CreateJobSchema.safeParse(body);
-
-    if (!bodyParsed.success) {
-      reply.status(400).send({ error: bodyParsed.error });
-      return;
-    }
-
-    const { resumeId, jobDescription } = bodyParsed.data;
-
-    if (!resumeId || !jobDescription) {
-      reply.status(400).send({ error: "Missing resumeId or jobDescription" });
-      return;
-    }
-
-    const isValidUUID = uuidValidate(resumeId);
-
-    if (!isValidUUID) {
-      reply.status(400).send({ error: "Invalid resume ID format" });
-      return;
-    }
-
-    const resume = await findResumeById(resumeId);
-
-    if (!resume) {
-      reply.status(404).send({ error: "Resume not found" });
-      return;
-    }
-
-    reply.status(201).send({
-      message: "Job description added successfully",
-      resumeId,
-      jobDescription,
-    });
-  });
 }

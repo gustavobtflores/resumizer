@@ -112,8 +112,9 @@ export function ResumePreview({ resume }: { resume: StructuredResume }) {
             socials.map(({ url, label }, index) => (
               <Fragment key={index}>
                 <span>•</span>
+                {label}:{" "}
                 <a href={url} target="_blank" rel="noopener noreferrer">
-                  {label}
+                  {url}
                 </a>
               </Fragment>
             ))}

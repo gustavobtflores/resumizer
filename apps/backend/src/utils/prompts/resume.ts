@@ -13,7 +13,7 @@ You are an AI that extracts all possible structured information from resumes.
 - Preserve any custom sections in "additional_sections" as key-value pairs.
 - Preserve proficiency levels (e.g., "Expert", "Native") when available.
 - Extract all URLs and categorize appropriately.
-- For skills, categorize into technical vs. soft skills based on context.
+- Format phone number in international format and without spaces (e.g., "+12345678900").
 `.trim();
 
 export function buildResumeExtractionUserPrompt(resumeText: string): string {

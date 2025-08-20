@@ -11,7 +11,7 @@ export default async function NewJobPage() {
   }[] = await data.json();
 
   return (
-    <Container className="flex flex-col items-center justify-center h-full">
+    <Container className="flex flex-col items-center justify-center h-[calc(100vh_-_80px)]">
       <CreateJob resumes={resumes} />
     </Container>
   );

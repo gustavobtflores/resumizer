@@ -70,6 +70,32 @@ function Education({
   );
 }
 
+function Projects({ projects }: { projects: StructuredResume["projects"] }) {
+  return (
+    <section className="mt-10">
+      <h2 className="text-base border-b border-b-border print:border-b-zinc-200 pb-2 mb-4">
+        Projetos
+      </h2>
+      {projects.map((project, index) => (
+        <div key={index} className="mb-4">
+          <h3 className="text-lg font-semibold">{project.name}</h3>
+          <p className="text-sm text-muted-foreground">{project.description}</p>
+          {project.url && (
+            <a
+              href={normalizeURL(project.url)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              Ver projeto
+            </a>
+          )}
+        </div>
+      ))}
+    </section>
+  );
+}
+
 export function ResumePreview({ resume }: { resume: StructuredResume }) {
   const socials = (
     [
@@ -121,6 +147,7 @@ export function ResumePreview({ resume }: { resume: StructuredResume }) {
         </div>
         <Experiences experiences={resume.work_experience} />
         <Education education={resume.education} />
+        {resume.projects.length > 0 && <Projects projects={resume.projects} />}
       </div>
     </div>
   );

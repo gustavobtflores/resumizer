@@ -12,7 +12,7 @@ import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StructuredResume } from "@/types/StructuredResume";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { ResumePreview } from "./ResumePreview";
 import { PersonalInfoForm } from "./PersonalInfoForm";
 import { WorkExperienceForm } from "./WorkExperienceForm";
@@ -34,6 +34,15 @@ export default function Resume({
     defaultValues: resume,
   });
   const formValues = form.watch();
+
+  const {
+    fields: projectsFields,
+    append: appendProject,
+    remove: removeProject,
+  } = useFieldArray({
+    control: form.control,
+    name: "projects",
+  });
 
   useEffect(() => {
     form.reset(resume);
@@ -203,6 +212,57 @@ export default function Resume({
                         />
                       </div>
                     ))}
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="projects" className="px-4">
+                  <AccordionTrigger>
+                    <strong>Projetos</strong>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    {projectsFields.map((field, index) => (
+                      <div key={field.id} className="mb-4">
+                        <Controller
+                          control={form.control}
+                          name={`projects.${index}.name`}
+                          render={({ field }) => (
+                            <Input
+                              type="text"
+                              {...field}
+                              placeholder="Nome do projeto"
+                              className="mb-2"
+                            />
+                          )}
+                        />
+                        <Controller
+                          control={form.control}
+                          name={`projects.${index}.description`}
+                          render={({ field }) => (
+                            <Textarea
+                              placeholder="Descrição do projeto"
+                              {...field}
+                              className="mb-2"
+                            />
+                          )}
+                        />
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() =>
+                        appendProject({
+                          achievements: [],
+                          description: "",
+                          end_date: new Date().toDateString(),
+                          name: "",
+                          start_date: new Date().toDateString(),
+                          technologies_used: [],
+                          url: "",
+                        })
+                      }
+                    >
+                      Adicionar projeto
+                    </Button>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="socials-contact" className="px-4">

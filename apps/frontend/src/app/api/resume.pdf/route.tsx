@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   sep: { fontSize: 10, marginHorizontal: 4 },
   socials: { fontSize: 10, marginTop: 4 },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 12,
     marginTop: 12,
     paddingBottom: 4,
     borderBottomWidth: 1,
@@ -54,18 +54,21 @@ const sectionTitles = {
   "pt-BR": {
     experiences: "Experiências",
     education: "Formação acadêmica",
+    projects: "Projetos",
     professionalSummary: "Resumo Profissional",
     current: "Atual",
   },
   "en-US": {
     experiences: "Professional Experience",
     education: "Education",
+    projects: "Projects",
     professionalSummary: "Professional Summary",
     current: "Present",
   },
   "es-ES": {
     experiences: "Experiencias",
     education: "Educación",
+    projects: "Proyectos",
     professionalSummary: "Resumen Profesional",
     current: "Actual",
   },
@@ -194,6 +197,26 @@ function EducationPDF({
   );
 }
 
+function ProjectsPDF({
+  projects,
+  lang,
+}: {
+  projects: StructuredResume["projects"];
+  lang: "pt-BR" | "en-US" | "es-ES";
+}) {
+  return (
+    <View style={{ marginTop: 12 }}>
+      <Text style={styles.sectionTitle}>{sectionTitles[lang].projects}</Text>
+      {projects.map((project, index) => (
+        <View key={index} style={{ marginBottom: 6 }}>
+          <Text style={styles.h3}>{project.name}</Text>
+          <Text style={styles.line}>{project.description}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
 function SkillsPDF({ skills }: { skills: StructuredResume["skills"] }) {
   return (
     <View style={{ marginTop: 12 }}>
@@ -236,6 +259,7 @@ function ResumePDF({
 
         <ExperiencesPDF experiences={resume.work_experience} lang={lang} />
         <EducationPDF education={resume.education} lang={lang} />
+        <ProjectsPDF projects={resume.projects} lang={lang} />
         <SkillsPDF skills={resume.skills} />
       </Page>
     </Document>

@@ -109,7 +109,7 @@ Return ONE JSON object conforming exactly to the schema. Be conservative. Do not
 3) Score subscores (0-100) with weights; compute match_score conservatively.
 4) List gaps and concrete edits; rewrite 2-5 bullets with metrics.
 5) Provide a 2-3 sentence JD-aligned summary.
-6) Write the JSON values with the same language as the resume (e.g., English, Portuguese).
+6) Write the JSON values in PT-BR, but keep keys in English.
 7) Only include evidence paths where is explicitly requested in the JSON schema.
 No prose outside JSON. No extra keys. If unknown, use null or [].
 Rules: treat “required/must/minimum/degree/cert” as mandatory; prefer recent; penalize domain mismatch; map synonyms (ts/typescript, node/node.js, postgres/postgresql, aws/amazon web services). Cap location_logistics unless remote-friendly.

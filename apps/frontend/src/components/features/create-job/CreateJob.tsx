@@ -86,8 +86,10 @@ export function CreateJob({
     fetch(`http://localhost:8080/resumes/${selectedResume}`)
       .then((response) => response.json())
       .then((data) => {
-        setAvailableLanguages(data.available_languages || []);
-        console.log("Available languages:", data.available_languages);
+        const { data: resume } = data;
+
+        setAvailableLanguages(resume.available_languages || []);
+        console.log("Available languages:", resume.available_languages);
       })
       .finally(() => {
         setLoadingLanguages(false);

@@ -9,6 +9,7 @@ export interface StructuredResume {
   metadata: {
     language: string;
   };
+  id: string;
 }
 
 interface Skills {

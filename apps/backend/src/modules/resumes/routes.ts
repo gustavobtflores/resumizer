@@ -1,6 +1,5 @@
 import { FastifyInstance } from "fastify";
 import path from "path";
-import pdf from "pdf-parse";
 import { validate as uuidValidate } from "uuid";
 import { uploadFileToS3 } from "../../clients/s3/functions/upload";
 import {
@@ -10,15 +9,12 @@ import {
   updateResumeTranslation,
   findResumeTranslationById,
 } from "../../database/queries/resume-translations";
-import {
-  createResume,
-  findAllResumes,
-  findResumeById,
-  deleteResume,
-} from "../../database/queries/resumes";
 import { Resume } from "../../types/resume";
 import { extractResumeToJson, translateResumeToJson } from "./service";
 import { Language, SUPPORTED_LANGUAGES } from "../../constants/languages";
+import { ResumesRepo } from "./repo";
+import { parsePDF } from "../../utils/check-pdf";
+import PdfParse from "pdf-parse";
 
 export default async function resumes(fastify: FastifyInstance) {
   fastify.post("/resumes", async (request, reply) => {
@@ -26,15 +22,31 @@ export default async function resumes(fastify: FastifyInstance) {
       const data = await request.file();
 
       if (data === undefined) {
-        reply.status(400).send({ error: "No file uploaded" });
+        reply.status(400).send({ error: { message: "No file uploaded" } });
+        return;
+      }
+
+      if (data.mimetype !== "application/pdf") {
+        reply.status(400).send({ error: { message: "Invalid file type" } });
         return;
       }
 
       const dataBuffer = await data.toBuffer();
-      const pdfData = await pdf(dataBuffer);
+      const parsedPDF = await parsePDF(dataBuffer);
 
-      if (!pdfData.text) {
-        reply.status(400).send({ error: "No text extracted from PDF" });
+      if (!parsedPDF.isPDF) {
+        reply
+          .status(400)
+          .send({ error: { message: "File is not a valid PDF" } });
+        return;
+      }
+
+      const pdfData = parsedPDF.data as PdfParse.Result;
+
+      if (pdfData.text.trim() === "") {
+        reply
+          .status(400)
+          .send({ error: { message: "No text extracted from PDF" } });
         return;
       }
 
@@ -46,7 +58,7 @@ export default async function resumes(fastify: FastifyInstance) {
 
       const extractedData = await extractResumeToJson(fastify, pdfData);
 
-      const createdResume = await createResume({
+      const createdResume = await ResumesRepo.createResume({
         original_json: extractedData,
         file_path: s3Filename,
       });
@@ -59,14 +71,14 @@ export default async function resumes(fastify: FastifyInstance) {
 
       reply.status(200).send(createdTranslation);
     } catch (error) {
-      console.error(error);
+      reply.status(500).send({ error: { message: "Internal server error" } });
     }
   });
 
   fastify.get("/resumes", async (request, reply) => {
-    const resumes = await findAllResumes();
+    const resumes = await ResumesRepo.findAllResumes();
 
-    reply.status(200).send(resumes);
+    reply.status(200).send({ data: resumes });
   });
 
   fastify.get("/resumes/:id", async (request, reply) => {
@@ -87,18 +99,24 @@ export default async function resumes(fastify: FastifyInstance) {
 
     const resume = language
       ? await findResumeTranslationByIdAndLanguage(id, language)
-      : await findResumeById(id);
+      : await ResumesRepo.findResumeById(id);
 
     if (!resume) {
-      reply.status(404).send({ error: "Resume not found" });
+      reply.status(404).send({ error: { message: "Resume not found" } });
       return;
     }
 
     const languages = await findResumeTranslationsById(id);
 
     reply.status(200).send({
-      ...resume,
-      available_languages: languages.map((lang) => lang.language),
+      data: {
+        resume: {
+          id: resume.id,
+          language: resume.language,
+          ...(resume.translated_json as Resume),
+        },
+        available_languages: languages.map((lang) => lang.language),
+      },
     });
   });
 
@@ -165,14 +183,14 @@ export default async function resumes(fastify: FastifyInstance) {
   fastify.delete("/resumes/:id", async (request, reply) => {
     const { id } = request.params as { id: string };
 
-    const resume = await findResumeById(id);
+    const resume = await ResumesRepo.findResumeById(id);
 
     if (!resume) {
       reply.status(404).send({ error: "Resume not found" });
       return;
     }
 
-    await deleteResume(id);
+    await ResumesRepo.deleteResume(id);
 
     reply.status(204).send();
   });

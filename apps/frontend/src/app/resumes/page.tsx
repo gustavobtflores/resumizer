@@ -5,12 +5,16 @@ import { StructuredResume } from "@/types/StructuredResume";
 
 export default async function Resumes() {
   const data = await fetch("http://localhost:8080/resumes");
-  const resumes: {
-    id: string;
-    original_json: StructuredResume;
-    created_at: string;
-    updated_at: string;
-  }[] = await data.json();
+  const {
+    data: resumes,
+  }: {
+    data: {
+      id: string;
+      original_json: StructuredResume;
+      created_at: string;
+      updated_at: string;
+    }[];
+  } = await data.json();
 
   return (
     <Container className="pt-20">

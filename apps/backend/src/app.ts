@@ -5,7 +5,7 @@ import autoload from "@fastify/autoload";
 import { env } from "./utils/env";
 import { join } from "path";
 
-async function main() {
+function buildApp() {
   const server = fastify({
     logger: {
       transport: {
@@ -22,7 +22,9 @@ async function main() {
   server.register(multipart, {
     limits: {
       fileSize: 5 * 1024 * 1024,
+      files: 1,
     },
+    logLevel: "info",
   });
 
   server.register(autoload, {
@@ -39,4 +41,4 @@ async function main() {
   return server;
 }
 
-main();
+export const app = buildApp();

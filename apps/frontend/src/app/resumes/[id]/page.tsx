@@ -10,13 +10,16 @@ export default async function Resume({
 }) {
   const { id } = await params;
   const { language } = await searchParams;
-  const data =
+  const response =
     language === undefined
       ? await fetch(`http://localhost:8080/resumes/${id}`)
       : await fetch(`http://localhost:8080/resumes/${id}?language=${language}`);
-  const resume = await data.json();
+  const { data } = await response.json();
+  const { resume, available_languages } = data;
 
-  if (!data.ok) {
+  console.log("Resume data:", resume); // Debugging line
+
+  if (!response.ok) {
     redirect("/resumes");
   }
 
@@ -24,5 +27,7 @@ export default async function Resume({
     redirect(`/resumes/${id}?language=${resume.language}`);
   }
 
-  return <ResumeView resumeData={resume} />;
+  return (
+    <ResumeView resume={resume} availableLanguages={available_languages} />
+  );
 }

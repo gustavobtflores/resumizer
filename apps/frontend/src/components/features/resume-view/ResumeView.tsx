@@ -18,18 +18,16 @@ import { PersonalInfoForm } from "./PersonalInfoForm";
 import { WorkExperienceForm } from "./WorkExperienceForm";
 import { useEffect } from "react";
 import { ResumeLanguageChange } from "./ResumeLanguageChange";
-import { FileDown } from "lucide-react";
+import { FileDown, Trash } from "lucide-react";
+import { Language } from "@/types/Language";
 
 export default function Resume({
-  resumeData,
+  resume,
+  availableLanguages,
 }: {
-  resumeData: {
-    id: string;
-    translated_json: StructuredResume;
-    available_languages: ("pt-BR" | "en-US" | "es-ES")[];
-  };
+  resume: StructuredResume;
+  availableLanguages: Language[];
 }) {
-  const resume = resumeData.translated_json;
   const form = useForm({
     defaultValues: resume,
   });
@@ -54,7 +52,7 @@ export default function Resume({
       ...data,
     };
 
-    fetch(`http://localhost:8080/resumes/${resumeData.id}`, {
+    fetch(`http://localhost:8080/resumes/${resume.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -103,8 +101,8 @@ export default function Resume({
         <div className="py-4 flex flex-col border border-border col-span-2 overflow-auto ml-8 mt-8 rounded-lg shadow h-[80dvh] sticky top-28">
           <div className="px-4 border-b border-b-border pb-4">
             <ResumeLanguageChange
-              resumeId={resumeData.id}
-              availableLanguages={resumeData.available_languages}
+              resumeId={resume.id}
+              availableLanguages={availableLanguages}
             />
           </div>
           <Form {...form}>
@@ -220,7 +218,10 @@ export default function Resume({
                   </AccordionTrigger>
                   <AccordionContent>
                     {projectsFields.map((field, index) => (
-                      <div key={field.id} className="mb-4">
+                      <div
+                        key={field.id}
+                        className="pb-4 mb-4 border-b border-b-border"
+                      >
                         <Controller
                           control={form.control}
                           name={`projects.${index}.name`}
@@ -239,11 +240,19 @@ export default function Resume({
                           render={({ field }) => (
                             <Textarea
                               placeholder="Descrição do projeto"
+                              rows={10}
                               {...field}
-                              className="mb-2"
                             />
                           )}
                         />
+                        <Button
+                          variant={"destructiveGhost"}
+                          className="mt-2"
+                          onClick={() => removeProject(index)}
+                        >
+                          <Trash />
+                          Remover projeto
+                        </Button>
                       </div>
                     ))}
                     <Button

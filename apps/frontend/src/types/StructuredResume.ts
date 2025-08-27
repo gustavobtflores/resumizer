@@ -14,9 +14,10 @@ export interface StructuredResume {
 
 interface Skills {
   languages: string[];
-  soft_skills: string[];
-  technical_skills: string[];
-  tools_technologies: string[];
+  programming_languages: string[];
+  web_technologies: string[];
+  database_cloud: string[];
+  tools_platforms: string[];
 }
 
 interface Project {

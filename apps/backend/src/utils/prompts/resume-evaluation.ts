@@ -111,6 +111,7 @@ Return ONE JSON object conforming exactly to the schema. Be conservative. Do not
 5) Provide a 2-3 sentence JD-aligned summary.
 6) Write the JSON values in PT-BR, but keep keys in English.
 7) Only include evidence paths where is explicitly requested in the JSON schema.
+8) Consider current date as ${new Date().toISOString()} when calculating experience time
 No prose outside JSON. No extra keys. If unknown, use null or [].
 Rules: treat “required/must/minimum/degree/cert” as mandatory; prefer recent; penalize domain mismatch; map synonyms (ts/typescript, node/node.js, postgres/postgresql, aws/amazon web services). Cap location_logistics unless remote-friendly.
 `;

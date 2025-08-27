@@ -1,16 +1,29 @@
-import {
-  test,
-  expect,
-  describe,
-  beforeAll,
-  afterAll,
-  beforeEach,
-  afterEach,
-} from "vitest";
+import { test, expect, describe, beforeAll, afterAll, vi } from "vitest";
 import { app } from "../../src/app";
 import FormData from "form-data";
 import { ResumesRepo } from "../../src/modules/resumes/repo";
+import { readFileSync } from "fs";
+import path from "path";
 import { createResumeTranslation } from "../../src/database/queries/resume-translations";
+const openAiFixture = vi.hoisted(
+  async () => await import("../fixtures/openai-response-fixture.json")
+);
+
+vi.mock("openai", async () => {
+  const create = vi.fn().mockResolvedValue({
+    output_text: JSON.stringify((await openAiFixture).default),
+  });
+
+  const OpenAI = vi.fn().mockImplementation(() => {
+    return { responses: { create } };
+  });
+
+  return { default: OpenAI };
+});
+
+const resumeFixture = readFileSync(
+  path.resolve(__dirname, "../fixtures/resume.pdf")
+);
 
 function buildMultipartPDF(filename = "resume.pdf", buf?: Buffer) {
   const form = new FormData();
@@ -88,7 +101,7 @@ describe("Resumes data functional tests", () => {
     const response = await app.inject({
       method: "POST",
       url: "/resumes",
-      ...buildMultipartPDF("resume.pdf"),
+      ...buildMultipartPDF("resume.pdf", resumeFixture),
     });
 
     expect(response.statusCode).toBe(200);

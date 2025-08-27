@@ -22,9 +22,9 @@ const styles = StyleSheet.create({
   sep: { fontSize: 10, marginHorizontal: 4 },
   socials: { fontSize: 10, marginTop: 4 },
   sectionTitle: {
-    fontSize: 12,
+    fontSize: 10,
     marginTop: 12,
-    paddingBottom: 4,
+    paddingBottom: 8,
     borderBottomWidth: 1,
     borderBottomColor: "#cccccc",
     borderStyle: "solid",
@@ -40,7 +40,12 @@ const styles = StyleSheet.create({
   },
   h3: { fontSize: 11, fontWeight: "bold", marginBottom: 4 },
   muted: { fontSize: 10, color: "#555555" },
-  bulletItem: { flexDirection: "row", marginTop: 4 },
+  bulletItem: {
+    flexDirection: "row",
+    marginTop: 4,
+    color: "#555555",
+    fontSize: 8,
+  },
   bulletGlyph: {
     width: 9,
     fontSize: 10,
@@ -156,7 +161,7 @@ function ExperiencesPDF({
               {exp.achievements.map((a, i) => (
                 <View key={i} style={styles.bulletItem}>
                   <Text style={styles.bulletGlyph}>•</Text>
-                  <Text style={styles.bulletText}>{a}</Text>
+                  <Text style={[styles.bulletText]}>{a}</Text>
                 </View>
               ))}
             </View>
@@ -210,7 +215,9 @@ function ProjectsPDF({
       {projects.map((project, index) => (
         <View key={index} style={{ marginBottom: 6 }}>
           <Text style={styles.h3}>{project.name}</Text>
-          <Text style={styles.line}>{project.description}</Text>
+          <Text style={[styles.line, { color: "#555555", marginTop: 8 }]}>
+            {project.description}
+          </Text>
         </View>
       ))}
     </View>
@@ -222,11 +229,36 @@ function SkillsPDF({ skills }: { skills: StructuredResume["skills"] }) {
     <View style={{ marginTop: 12 }}>
       <Text style={styles.sectionTitle}>Skills</Text>
       <View style={styles.rowWrap}>
-        {skills.technical_skills.map((skill, index) => (
-          <Text key={index} style={styles.line}>
-            {skill} |{" "}
-          </Text>
-        ))}
+        <Text style={[styles.line, { fontWeight: "semibold" }]}>
+          Linguagens de Programação:{" "}
+        </Text>
+        <Text style={[styles.line, { color: "#555555" }]}>
+          {skills.programming_languages.join(", ")}
+        </Text>
+      </View>
+      <View style={styles.rowWrap}>
+        <Text style={[styles.line, { fontWeight: "semibold" }]}>
+          Tecnologias Web:{" "}
+        </Text>
+        <Text style={[styles.line, { color: "#555555" }]}>
+          {skills.web_technologies.join(", ")}
+        </Text>
+      </View>
+      <View style={styles.rowWrap}>
+        <Text style={[styles.line, { fontWeight: "semibold" }]}>
+          Banco de Dados e Nuvem:{" "}
+        </Text>
+        <Text style={[styles.line, { color: "#555555" }]}>
+          {skills.database_cloud.join(", ")}
+        </Text>
+      </View>
+      <View style={styles.rowWrap}>
+        <Text style={[styles.line, { fontWeight: "semibold" }]}>
+          Ferramentas e Plataformas:{" "}
+        </Text>
+        <Text style={[styles.line, { color: "#555555" }]}>
+          {skills.tools_platforms.join(", ")}
+        </Text>
       </View>
     </View>
   );

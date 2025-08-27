@@ -5,8 +5,15 @@ import {
   resumeTranslationsTable,
 } from "../../../drizzle/schema/resume-translations";
 
-export function createResumeTranslation(translation: NewResumeTranslation) {
-  return db.insert(resumeTranslationsTable).values(translation).returning();
+export async function createResumeTranslation(
+  translation: NewResumeTranslation
+) {
+  const data = await db
+    .insert(resumeTranslationsTable)
+    .values(translation)
+    .returning();
+
+  return data[0];
 }
 
 export async function findResumeTranslationById(id: string) {

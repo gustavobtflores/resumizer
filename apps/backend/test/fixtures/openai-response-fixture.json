@@ -1,0 +1,130 @@
+{
+  "personal_info": {
+    "full_name": "Alex Johnson",
+    "email": "alex.johnson@example.com",
+    "phone": "+1 555-123-4567",
+    "location": {
+      "city": "Springfield",
+      "state": "IL",
+      "country": "USA",
+      "postal_code": "62704"
+    },
+    "linkedin_url": "https://www.linkedin.com/in/alexjohnson",
+    "github_url": "https://github.com/alexjohnson",
+    "portfolio_url": "https://alexjohnson.dev",
+    "other_urls": [
+      {
+        "label": "Blog",
+        "url": "https://blog.alexjohnson.dev"
+      },
+      {
+        "label": "Twitter",
+        "url": "https://twitter.com/alexcodes"
+      }
+    ]
+  },
+  "professional_summary": "Software developer with 4+ years of experience building web applications and APIs. Focused on scalable architectures, clean code, and delivering user-centric solutions.",
+  "work_experience": [
+    {
+      "company": "TechNova Solutions",
+      "position": "Front-End Developer",
+      "location": "Remote",
+      "start_date": "2021-05-01",
+      "end_date": null,
+      "is_current": true,
+      "description": "Worked on developing and maintaining SaaS products in an agile environment. Built responsive UIs and collaborated with backend teams.",
+      "achievements": [
+        "Migrated legacy UI to React + TypeScript",
+        "Improved app performance by 40% through code splitting and lazy loading",
+        "Led accessibility initiative across the product suite"
+      ],
+      "time_amount": 40
+    },
+    {
+      "company": "CodeWorks Inc.",
+      "position": "Software Engineer",
+      "location": "Austin, TX",
+      "start_date": "2019-01-01",
+      "end_date": "2021-04-30",
+      "is_current": false,
+      "description": "Contributed to backend and frontend development of internal tools and customer-facing portals.",
+      "achievements": [
+        "Implemented CI/CD pipeline with GitHub Actions",
+        "Reduced API response times by 25% via query optimizations"
+      ],
+      "time_amount": 28
+    }
+  ],
+  "education": [
+    {
+      "institution": "Springfield University",
+      "degree": "Bachelor of Science",
+      "field_of_study": "Computer Science",
+      "location": "Springfield, IL",
+      "start_date": "2016-08-15T00:00:00.000Z",
+      "graduation_date": "2020-05-20T00:00:00.000Z",
+      "gpa": "3.6/4.0",
+      "honors": ["Dean’s List 2018–2020"],
+      "relevant_coursework": [
+        "Data Structures",
+        "Operating Systems",
+        "Software Engineering",
+        "Database Systems"
+      ]
+    }
+  ],
+  "skills": {
+    "programming_languages": ["JavaScript", "TypeScript", "Python", "Go"],
+    "web_technologies": ["React", "Next.js", "Node.js", "GraphQL"],
+    "database_cloud": ["PostgreSQL", "MySQL", "AWS S3", "Firebase"],
+    "tools_platforms": ["Docker", "Kubernetes", "Jest", "GitHub Actions"],
+    "languages": [
+      {
+        "language": "English",
+        "proficiency": "Native"
+      },
+      {
+        "language": "German",
+        "proficiency": "Intermediate"
+      }
+    ]
+  },
+  "certifications": [
+    {
+      "name": "Certified Kubernetes Application Developer",
+      "issuing_organization": "Cloud Native Computing Foundation",
+      "issue_date": "2023-03-01",
+      "expiration_date": "2026-03-01",
+      "credential_id": "CKAD-12345"
+    }
+  ],
+  "projects": [
+    {
+      "name": "TaskMaster",
+      "description": "A task management web app that helps teams organize work and track progress in real time.",
+      "technologies_used": ["React", "Node.js", "PostgreSQL", "Docker"],
+      "start_date": "2022-01-01T00:00:00.000Z",
+      "end_date": "2022-06-01T00:00:00.000Z",
+      "url": "https://taskmaster.app",
+      "achievements": [
+        "Developed drag-and-drop task board",
+        "Implemented real-time updates using WebSockets"
+      ]
+    },
+    {
+      "name": "Foodie Finder",
+      "description": "Mobile-friendly web app for discovering restaurants and reviewing menus.",
+      "technologies_used": ["Next.js", "MongoDB", "Tailwind CSS"],
+      "start_date": "2021-03-01T00:00:00.000Z",
+      "end_date": "2021-09-01T00:00:00.000Z",
+      "url": "https://foodiefinder.dev",
+      "achievements": [
+        "Integrated third-party restaurant APIs",
+        "Implemented advanced search and filtering"
+      ]
+    }
+  ],
+  "metadata": {
+    "language": "en-US"
+  }
+}

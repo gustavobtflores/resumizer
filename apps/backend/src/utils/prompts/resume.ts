@@ -30,8 +30,8 @@ export const ZodResumeSchema = z.object({
       company: z.string(),
       position: z.string(),
       location: z.string(),
-      start_date: z.coerce.date(),
-      end_date: z.coerce.date(),
+      start_date: z.string(),
+      end_date: z.string().optional().nullable(),
       is_current: z.boolean(),
       description: z.string(),
       achievements: z.array(z.string()),
@@ -53,14 +53,16 @@ export const ZodResumeSchema = z.object({
   ),
 
   skills: z.object({
-    technical_skills: z.array(z.string()),
+    programming_languages: z.array(z.string()),
+    web_technologies: z.array(z.string()),
+    database_cloud: z.array(z.string()),
+    tools_platforms: z.array(z.string()),
     languages: z.array(
       z.object({
         language: z.string(),
         proficiency: z.string(),
       })
     ),
-    tools_technologies: z.array(z.string()),
   }),
 
   certifications: z.array(

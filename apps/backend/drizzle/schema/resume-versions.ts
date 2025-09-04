@@ -6,7 +6,7 @@ export const resumeVersionsTable = pgTable("resume_versions", {
   id: uuid().primaryKey().defaultRandom(),
   resume_id: uuid()
     .notNull()
-    .references(() => resumesTable.id),
+    .references(() => resumesTable.id, { onDelete: "cascade" }),
   version_number: integer().notNull(),
   json: jsonb().notNull(),
   created_at: timestamp({ withTimezone: true }).notNull().defaultNow(),

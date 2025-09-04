@@ -1,5 +1,5 @@
 {
-  "id": "56d56790-84fb-4c0c-bee0-92172ebaa4b8",
+  "id": "8d1eb51a-a3b7-4ea1-8260-803d3d8d5409",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -15,8 +15,8 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "resume_id": {
-          "name": "resume_id",
+        "resume_version_id": {
+          "name": "resume_version_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -50,17 +50,17 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "jobs_resume_id_resume_translations_id_fk": {
-          "name": "jobs_resume_id_resume_translations_id_fk",
+        "jobs_resume_version_id_resume_versions_id_fk": {
+          "name": "jobs_resume_version_id_resume_versions_id_fk",
           "tableFrom": "jobs",
-          "tableTo": "resume_translations",
+          "tableTo": "resume_versions",
           "columnsFrom": [
-            "resume_id"
+            "resume_version_id"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
+          "onDelete": "set null",
           "onUpdate": "no action"
         }
       },
@@ -122,6 +122,72 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.resume_versions": {
+      "name": "resume_versions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "resume_id": {
+          "name": "resume_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "version_number": {
+          "name": "version_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "json": {
+          "name": "json",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "resume_versions_resume_id_resumes_id_fk": {
+          "name": "resume_versions_resume_id_resumes_id_fk",
+          "tableFrom": "resume_versions",
+          "tableTo": "resumes",
+          "columnsFrom": [
+            "resume_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.resumes": {
       "name": "resumes",
       "schema": "",
@@ -136,6 +202,12 @@
         "original_json": {
           "name": "original_json",
           "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "language_detected": {
+          "name": "language_detected",
+          "type": "varchar(5)",
           "primaryKey": false,
           "notNull": true
         },
@@ -156,6 +228,12 @@
         "file_path": {
           "name": "file_path",
           "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "current_version": {
+          "name": "current_version",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         }

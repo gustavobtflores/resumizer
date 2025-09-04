@@ -1,17 +1,18 @@
 import { eq } from "drizzle-orm";
 import { NewResume, resumesTable } from "../../../drizzle/schema/resumes";
-import { db } from "../../database";
-import { resumeTranslationsTable } from "../../../drizzle/schema/resume-translations";
+import { Database, db } from "../../database";
 
 export const ResumesRepo = {
-  createResume: (resume: NewResume) => {
-    return db.insert(resumesTable).values(resume).returning();
+  createResume: async (resume: NewResume, tx: Database = db) => {
+    const data = await tx.insert(resumesTable).values(resume).returning();
+
+    return data[0];
   },
   findResumeById: async (id: string) => {
     const data = await db
       .select()
-      .from(resumeTranslationsTable)
-      .where(eq(resumeTranslationsTable.resume_id, id))
+      .from(resumesTable)
+      .where(eq(resumesTable.id, id))
       .limit(1);
 
     return data[0];
@@ -28,5 +29,14 @@ export const ResumesRepo = {
   },
   deleteResume: (id: string) => {
     return db.delete(resumesTable).where(eq(resumesTable.id, id));
+  },
+  existsById: async (id: string) => {
+    const data = await db
+      .select()
+      .from(resumesTable)
+      .where(eq(resumesTable.id, id))
+      .limit(1);
+
+    return data.length > 0;
   },
 };

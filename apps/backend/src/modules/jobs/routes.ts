@@ -3,28 +3,30 @@ import { CreateJobSchema } from "./contracts";
 import { createJob, deleteJobById, findAllJobs, findJobById } from "./repo";
 import { evaluateResume } from "./services";
 import { findResumeTranslationByIdAndLanguage } from "../../database/queries/resume-translations";
+import { ResumeVersionsRepo } from "../resume-versions/repo";
+import { Resume } from "../../types/resume";
 
 export default async function jobs(fastify: FastifyInstance) {
   fastify.post("/jobs", async (request, reply) => {
     try {
       const jobData = CreateJobSchema.parse(request.body);
 
-      const resume = await findResumeTranslationByIdAndLanguage(
-        jobData.resumeId,
-        jobData.language
-      );
+      const resume = await ResumeVersionsRepo.findResumeByVersionAndId({
+        id: jobData.resumeId,
+        version: jobData.version,
+      });
 
       if (!resume) throw new Error("Resume not found");
 
       const evaluation = await evaluateResume(fastify, {
-        resume: JSON.stringify(resume.translated_json),
+        resume: JSON.stringify(resume.json),
         jobDescription: jobData.jobDescription,
       });
 
       if (!evaluation) throw new Error("Failed to evaluate resume");
 
       const newJob = await createJob({
-        resume_id: resume.id,
+        resume_version_id: resume.id,
         job_description: jobData.jobDescription,
         evaluation: evaluation,
       });

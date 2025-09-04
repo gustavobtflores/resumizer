@@ -1,12 +1,12 @@
 import { jsonb, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
 import { text } from "drizzle-orm/pg-core";
-import { resumeTranslationsTable } from "./resume-translations";
+import { resumeVersionsTable } from "./resume-versions";
 
 export const jobsTable = pgTable("jobs", {
   id: uuid().primaryKey().defaultRandom(),
-  resume_id: uuid()
+  resume_version_id: uuid()
     .notNull()
-    .references(() => resumeTranslationsTable.id, { onDelete: "cascade" }),
+    .references(() => resumeVersionsTable.id, { onDelete: "set null" }),
   job_description: text().notNull(),
   evaluation: jsonb().notNull(),
   created_at: timestamp({ withTimezone: true }).defaultNow().notNull(),

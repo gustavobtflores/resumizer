@@ -42,10 +42,12 @@ export function ResumeLanguageChange({
         });
     }
 
+    const url = new URL(`${origin}/${pathname}`);
     const params = new URLSearchParams(searchParams);
-
     params.set("language", value);
-    push(`${pathname}?${params.toString()}`);
+
+    url.search = params.toString();
+    push(url.toString());
   }
 
   return (

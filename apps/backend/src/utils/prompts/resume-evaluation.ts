@@ -4,6 +4,7 @@ export const ResumeEvaluationSchema = z
   .object({
     company: z.string().min(1),
     job_title: z.string().min(1),
+    role_summary: z.string().min(1),
     verdict: z.enum([
       "strong_match",
       "possible_match",
@@ -20,16 +21,6 @@ export const ResumeEvaluationSchema = z
         education_certs: z.number().int().min(0).max(100),
       })
       .strict(),
-    mandatory_requirements: z.array(
-      z
-        .object({
-          requirement: z.string(),
-          status: z.enum(["met", "partial", "unmet"]),
-          evidence_paths: z.array(z.string()),
-          notes: z.string().nullable(),
-        })
-        .strict()
-    ),
     keyword_coverage: z.array(
       z
         .object({
@@ -72,25 +63,7 @@ export const ResumeEvaluationSchema = z
         .strict()
     ),
     summary_for_resume: z.string(),
-    projects_to_highlight: z.array(
-      z
-        .object({
-          title_or_path: z.string(),
-          why_relevant: z.string(),
-          evidence_paths: z.array(z.string()),
-        })
-        .strict()
-    ),
     interview_prep_questions: z.array(z.string()),
-    experience_years_by_skill: z.array(
-      z
-        .object({
-          skill: z.string(),
-          years_estimate: z.number().min(0),
-          evidence_paths: z.array(z.string()),
-        })
-        .strict()
-    ),
     seniority_estimate: z.enum([
       "junior",
       "mid",

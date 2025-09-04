@@ -1,4 +1,6 @@
 export interface StructuredResume {
+  id: string;
+  version: number;
   skills: Skills;
   projects: Project[];
   education: Education[];
@@ -9,7 +11,6 @@ export interface StructuredResume {
   metadata: {
     language: string;
   };
-  id: string;
 }
 
 interface Skills {

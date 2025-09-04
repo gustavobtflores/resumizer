@@ -4,7 +4,6 @@ import { validate as uuidValidate } from "uuid";
 import { uploadFileToS3 } from "../../clients/s3/functions/upload";
 import {
   createResumeTranslation,
-  findResumeTranslationByIdAndLanguage,
   findResumeTranslationsById,
   updateResumeTranslation,
   findResumeTranslationById,
@@ -15,6 +14,8 @@ import { Language, SUPPORTED_LANGUAGES } from "../../constants/languages";
 import { ResumesRepo } from "./repo";
 import { parsePDF } from "../../utils/check-pdf";
 import PdfParse from "pdf-parse";
+import { ResumeVersionsRepo } from "../resume-versions/repo";
+import { runTransaction } from "../../database/transaction";
 
 export default async function resumes(fastify: FastifyInstance) {
   fastify.post("/resumes", async (request, reply) => {
@@ -58,18 +59,36 @@ export default async function resumes(fastify: FastifyInstance) {
 
       const extractedData = await extractResumeToJson(fastify, pdfData);
 
-      const createdResume = await ResumesRepo.createResume({
-        original_json: extractedData,
-        file_path: s3Filename,
+      const createdResume = await runTransaction(async (tx) => {
+        const resume = await ResumesRepo.createResume(
+          {
+            original_json: extractedData,
+            file_path: s3Filename,
+            language_detected: extractedData.metadata.language,
+            current_version: 1,
+          },
+          tx
+        );
+
+        await ResumeVersionsRepo.createVersion(
+          {
+            json: extractedData,
+            version_number: 1,
+            resume_id: resume.id,
+          },
+          tx
+        );
+
+        return resume;
       });
 
-      const createdTranslation = await createResumeTranslation({
-        resume_id: createdResume[0].id,
-        language: extractedData.metadata.language,
-        translated_json: extractedData,
+      reply.status(200).send({
+        data: {
+          id: createdResume.id,
+          language: createdResume.language_detected,
+          ...(createdResume.original_json as Resume),
+        },
       });
-
-      reply.status(200).send(createdTranslation);
     } catch (error) {
       reply.status(500).send({ error: { message: "Internal server error" } });
     }
@@ -97,9 +116,7 @@ export default async function resumes(fastify: FastifyInstance) {
       return;
     }
 
-    const resume = language
-      ? await findResumeTranslationByIdAndLanguage(id, language)
-      : await ResumesRepo.findResumeById(id);
+    const resume = await ResumesRepo.findResumeById(id);
 
     if (!resume) {
       reply.status(404).send({ error: { message: "Resume not found" } });
@@ -112,8 +129,8 @@ export default async function resumes(fastify: FastifyInstance) {
       data: {
         resume: {
           id: resume.id,
-          language: resume.language,
-          ...(resume.translated_json as Resume),
+          language: resume.language_detected,
+          ...(resume.original_json as Resume),
         },
         available_languages: languages.map((lang) => lang.language),
       },

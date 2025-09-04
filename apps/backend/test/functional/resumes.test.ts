@@ -42,6 +42,7 @@ describe("Resumes data functional tests", () => {
     id: "4fda5136-6069-468d-819b-f54189813c4d",
     file_path: "path/to/file.pdf",
     original_json: {},
+    language_detected: "en-US",
   };
 
   beforeAll(async () => {

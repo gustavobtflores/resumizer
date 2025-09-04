@@ -9,25 +9,46 @@ export default async function Resume({
   searchParams: Promise<{ [key: string]: string | string[] }>;
 }) {
   const { id } = await params;
-  const { language } = await searchParams;
-  const response =
-    language === undefined
-      ? await fetch(`http://localhost:8080/resumes/${id}`)
-      : await fetch(`http://localhost:8080/resumes/${id}?language=${language}`);
+  const response = await fetch(
+    `http://localhost:8080/resumes/${id}/versions/latest`
+  );
   const { data } = await response.json();
-  const { resume, available_languages } = data;
+  const { resume, versions } = data;
+  const { language, version } = await searchParams;
 
-  console.log("Resume data:", resume); // Debugging line
+  if (language || version) {
+    const url = new URL(`http://localhost:8080/resumes/${id}`);
+    const params = new URLSearchParams();
+
+    if (version) {
+      url.pathname += `/versions/${version}`;
+    }
+
+    if (language) {
+      params.set("language", language);
+    }
+
+    url.search = params.toString();
+
+    const response = await fetch(url.toString());
+
+    if (!response.ok) {
+      redirect("/resumes");
+    }
+
+    const { data } = await response.json();
+    const { resume, versions } = data;
+
+    return (
+      <ResumeView resume={resume} availableLanguages={[]} versions={versions} />
+    );
+  }
 
   if (!response.ok) {
     redirect("/resumes");
   }
 
-  if (!language) {
-    redirect(`/resumes/${id}?language=${resume.language}`);
-  }
-
   return (
-    <ResumeView resume={resume} availableLanguages={available_languages} />
+    <ResumeView resume={resume} availableLanguages={[]} versions={versions} />
   );
 }

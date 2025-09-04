@@ -8,5 +8,6 @@ export default defineConfig({
     globalSetup: "./test/vitest-setup.ts",
     testTimeout: 120_000,
     hookTimeout: 60_000,
+    watchTriggerPatterns: ["**/*.ts"],
   },
 });

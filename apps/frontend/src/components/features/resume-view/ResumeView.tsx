@@ -20,13 +20,16 @@ import { useEffect } from "react";
 import { ResumeLanguageChange } from "./ResumeLanguageChange";
 import { FileDown, Trash } from "lucide-react";
 import { Language } from "@/types/Language";
+import { ResumeVersionChange } from "./ResumeVersionChange";
 
 export default function Resume({
   resume,
   availableLanguages,
+  versions,
 }: {
   resume: StructuredResume;
   availableLanguages: Language[];
+  versions: number[];
 }) {
   const form = useForm({
     defaultValues: resume,
@@ -100,10 +103,16 @@ export default function Resume({
       <div className="grid grid-cols-8">
         <div className="py-4 flex flex-col border border-border col-span-2 overflow-auto ml-8 mt-8 rounded-lg shadow h-[80dvh] sticky top-28">
           <div className="px-4 border-b border-b-border pb-4">
-            <ResumeLanguageChange
-              resumeId={resume.id}
-              availableLanguages={availableLanguages}
+            <ResumeVersionChange
+              currentVersion={resume.version}
+              versions={versions}
             />
+            {/* <div className="mt-4">
+              <ResumeLanguageChange
+                resumeId={resume.id}
+                availableLanguages={availableLanguages}
+              />
+            </div> */}
           </div>
           <Form {...form}>
             <form

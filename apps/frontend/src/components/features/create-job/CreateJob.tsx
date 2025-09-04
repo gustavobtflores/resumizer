@@ -22,6 +22,8 @@ import { LanguageSelect } from "@/components/LanguageSelect";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Language } from "@/types/Language";
+import { VersionSelect } from "@/components/VersionSelect";
+import { version } from "os";
 
 export function CreateJob({
   resumes,
@@ -33,20 +35,15 @@ export function CreateJob({
   }[];
 }) {
   const router = useRouter();
-  const [loadingLanguages, setLoadingLanguages] = useState(false);
+  // const [loadingLanguages, setLoadingLanguages] = useState(false);
   const [selectedResume, setSelectedResume] = useState<string | null>(null);
-  const [availableLanguages, setAvailableLanguages] = useState<Language[]>([]);
+  // const [availableLanguages, setAvailableLanguages] = useState<Language[]>([]);
+  const [versions, setVersions] = useState<number[]>([]);
 
   function handleAddJob(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
-
-    console.log("Job added with data:", {
-      resumeId: formData.get("resumeId"),
-      jobDescription: formData.get("jobDescription"),
-      language: formData.get("language"),
-    });
 
     fetch("http://localhost:8080/jobs", {
       method: "POST",
@@ -55,7 +52,7 @@ export function CreateJob({
       },
       body: JSON.stringify({
         resumeId: formData.get("resumeId"),
-        language: formData.get("language"),
+        version: formData.get("version"),
         jobDescription: formData.get("jobDescription"),
       }),
     })
@@ -76,23 +73,37 @@ export function CreateJob({
     setSelectedResume(value);
   }
 
+  // useEffect(() => {
+  //   if (!selectedResume) {
+  //     setAvailableLanguages([]);
+  //     return;
+  //   }
+
+  //   setLoadingLanguages(true);
+  //   fetch(`http://localhost:8080/resumes/${selectedResume}`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       const { data: resume } = data;
+
+  //       setAvailableLanguages(resume.available_languages || []);
+  //       console.log("Available languages:", resume.available_languages);
+  //     })
+  //     .finally(() => {
+  //       setLoadingLanguages(false);
+  //     });
+  // }, [selectedResume]);
+
   useEffect(() => {
     if (!selectedResume) {
-      setAvailableLanguages([]);
+      setVersions([]);
       return;
     }
 
-    setLoadingLanguages(true);
-    fetch(`http://localhost:8080/resumes/${selectedResume}`)
+    fetch(`http://localhost:8080/resumes/${selectedResume}/versions`)
       .then((response) => response.json())
-      .then((data) => {
-        const { data: resume } = data;
-
-        setAvailableLanguages(resume.available_languages || []);
-        console.log("Available languages:", resume.available_languages);
-      })
-      .finally(() => {
-        setLoadingLanguages(false);
+      .then(({ data }) => {
+        setVersions(data.versions || []);
+        console.log("Available versions:", data.versions);
       });
   }, [selectedResume]);
 
@@ -120,12 +131,11 @@ export function CreateJob({
                 ))}
               </SelectContent>
             </Select>
-            <LanguageSelect
-              name="language"
-              availableLanguages={availableLanguages}
-              onLanguageChange={() => {}}
-              isLoading={loadingLanguages}
-              disabled={!!!selectedResume}
+            <VersionSelect
+              name="version"
+              versions={versions}
+              onChange={(version) => console.log(version)}
+              disabled={!selectedResume}
             />
           </div>
           <Textarea

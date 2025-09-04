@@ -43,6 +43,7 @@ describe("Resumes data functional tests", () => {
     file_path: "path/to/file.pdf",
     original_json: {},
     language_detected: "en-US",
+    current_version: 1,
   };
 
   beforeAll(async () => {

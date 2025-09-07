@@ -14,7 +14,10 @@ export interface StructuredResume {
 }
 
 interface Skills {
-  languages: string[];
+  languages: {
+    language: string;
+    proficiency: "basic" | "intermediate" | "advanced" | "fluent" | "native";
+  }[];
   programming_languages: string[];
   web_technologies: string[];
   database_cloud: string[];

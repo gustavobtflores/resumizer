@@ -260,6 +260,18 @@ function SkillsPDF({ skills }: { skills: StructuredResume["skills"] }) {
           {skills.tools_platforms.join(", ")}
         </Text>
       </View>
+      {skills.languages.length > 0 && (
+        <View style={styles.rowWrap}>
+          <Text style={[styles.line, { fontWeight: "semibold" }]}>
+            Idiomas:{" "}
+          </Text>
+          <Text style={[styles.line, { color: "#555555" }]}>
+            {(skills.languages || [])
+              .map((lang) => `${lang.language} (${lang.proficiency})`)
+              .join(", ")}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -319,7 +331,7 @@ export async function POST(req: NextRequest) {
     />
   );
 
-  return new Response(buffer, {
+  return new Response(buffer as BodyInit, {
     status: 200,
     headers: {
       "Content-Type": "application/pdf",

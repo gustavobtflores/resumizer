@@ -16,6 +16,7 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { ResumePreview } from "./ResumePreview";
 import { PersonalInfoForm } from "./PersonalInfoForm";
 import { WorkExperienceForm } from "./WorkExperienceForm";
+import { LanguagesForm } from "./LanguagesForm";
 import { useEffect } from "react";
 import { ResumeLanguageChange } from "./ResumeLanguageChange";
 import { FileDown, Trash } from "lucide-react";
@@ -32,7 +33,13 @@ export default function Resume({
   versions: number[];
 }) {
   const form = useForm({
-    defaultValues: resume,
+    defaultValues: {
+      ...resume,
+      skills: {
+        ...resume.skills,
+        languages: resume.skills?.languages || [],
+      },
+    },
   });
   const formValues = form.watch();
 
@@ -46,7 +53,13 @@ export default function Resume({
   });
 
   useEffect(() => {
-    form.reset(resume);
+    form.reset({
+      ...resume,
+      skills: {
+        ...resume.skills,
+        languages: resume.skills?.languages || [],
+      },
+    });
   }, [form, resume]);
 
   function onSubmit(data: Partial<StructuredResume>) {
@@ -219,6 +232,14 @@ export default function Resume({
                         />
                       </div>
                     ))}
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="languages" className="px-4">
+                  <AccordionTrigger>
+                    <strong>Idiomas</strong>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <LanguagesForm control={form.control} />
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="projects" className="px-4">

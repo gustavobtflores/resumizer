@@ -60,7 +60,13 @@ export const ZodResumeSchema = z.object({
     languages: z.array(
       z.object({
         language: z.string(),
-        proficiency: z.string(),
+        proficiency: z.enum([
+          "basic",
+          "intermediate",
+          "advanced",
+          "fluent",
+          "native",
+        ]),
       })
     ),
   }),

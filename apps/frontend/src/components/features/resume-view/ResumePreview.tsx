@@ -1,3 +1,4 @@
+import { PROFICIENCY_LEVELS } from "@/constants/language-proficiency";
 import { StructuredResume } from "@/types/StructuredResume";
 import { formatDate } from "@/utils/formatDate";
 import { normalizeURL } from "@/utils/normalizeURL";
@@ -96,6 +97,30 @@ function Projects({ projects }: { projects: StructuredResume["projects"] }) {
   );
 }
 
+function Languages({
+  languages,
+}: {
+  languages: StructuredResume["skills"]["languages"];
+}) {
+  if (languages.length === 0) return null;
+
+  return (
+    <section className="mt-10">
+      <h2 className="text-base border-b border-b-border pb-2 mb-4">Idiomas</h2>
+      <ul className="flex flex-col gap-1">
+        {languages.map((lang, index) => (
+          <li key={index} className="">
+            <span className="text-sm font-medium">{lang.language}:</span>{" "}
+            <span className="text-sm text-muted-foreground">
+              {PROFICIENCY_LEVELS[lang.proficiency]}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export function ResumePreview({ resume }: { resume: StructuredResume }) {
   const socials = (
     [
@@ -148,6 +173,7 @@ export function ResumePreview({ resume }: { resume: StructuredResume }) {
         <Experiences experiences={resume.work_experience} />
         <Education education={resume.education} />
         {resume.projects.length > 0 && <Projects projects={resume.projects} />}
+        <Languages languages={resume.skills?.languages || []} />
       </div>
     </div>
   );

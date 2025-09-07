@@ -3,7 +3,7 @@ import {
   resumeEvaluationSystemPrompt,
   resumeEvaluationUserPrompt,
   ResumeEvaluationSchema,
-} from "../../utils/prompts/resume-evaluation";
+} from "../../utils/prompts/evaluation";
 
 export async function evaluateResume(
   fastify: FastifyInstance,

@@ -13,9 +13,38 @@ type JobsListProps = {
       company: string;
       job_title: string;
       match_score: number;
+      seniority_estimate: "junior" | "mid" | "senior" | "staff+" | "unknown";
     };
   }[];
 };
+
+const SENIORITY_LEVEL = {
+  junior: {
+    label: "Júnior",
+    color: "text-green-500",
+    background: "bg-green-500/10",
+  },
+  mid: {
+    label: "Pleno",
+    color: "text-yellow-500",
+    background: "bg-yellow-500/10",
+  },
+  senior: {
+    label: "Sênior",
+    color: "text-red-500",
+    background: "bg-red-500/10",
+  },
+  "staff+": {
+    label: "Staff+",
+    color: "text-purple-500",
+    background: "bg-purple-500/10",
+  },
+  unknown: {
+    label: "Desconhecido",
+    color: "text-gray-500",
+    background: "bg-gray-500/10",
+  },
+} as const;
 
 export function JobsList({ jobs }: JobsListProps) {
   const router = useRouter();
@@ -37,14 +66,25 @@ export function JobsList({ jobs }: JobsListProps) {
       {jobs
         .map((job) => ({ ...job.evaluation, id: job.id }))
         .map((evaluation) => (
-          <Card key={evaluation.company}>
+          <Card key={evaluation.id}>
             <CardHeader>
+              <div>
+                <span
+                  className={`${
+                    SENIORITY_LEVEL[evaluation.seniority_estimate].color
+                  } ${
+                    SENIORITY_LEVEL[evaluation.seniority_estimate].background
+                  } font-semibold text-xs rounded-full px-2 mb-1 inline-block`}
+                >
+                  {SENIORITY_LEVEL[evaluation.seniority_estimate].label}
+                </span>
+              </div>
               <CardTitle className="overflow-hidden overflow-ellipsis min-w-0">
                 <strong className="font-semibold whitespace-nowrap">
                   {evaluation.job_title}
                 </strong>
               </CardTitle>
-              <span className="text-muted-foreground">
+              <span className="text-muted-foreground text-sm">
                 {evaluation.company}
               </span>
               <div>

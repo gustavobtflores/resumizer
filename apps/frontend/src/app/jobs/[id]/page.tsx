@@ -53,7 +53,10 @@ type Job = {
     strengths: string[];
     risks_or_flags: string[];
     keyword_coverage: { keyword: string; present: boolean }[];
-    interview_prep_questions: string[];
+    interview_prep_questions: {
+      question: string;
+      draft_response: string;
+    }[];
     tailoring_suggestions: {
       priority: number;
       rationale: string;
@@ -62,12 +65,10 @@ type Job = {
     }[];
     subscores: {
       skills_tech: number;
-      soft_process: number;
       impact_results: number;
       domain_industry: number;
       education_certs: number;
       experience_scope: number;
-      location_logistics: number;
     };
   };
 };
@@ -247,10 +248,13 @@ export default async function JobView({
         <div className="mt-8">
           {data.evaluation.interview_prep_questions.map((question) => (
             <div
-              key={question}
+              key={question.question}
               className="px-4 py-4 bg-zinc-500/10 text-sm mt-2 rounded-md"
             >
-              {question}
+              <strong className="text-base">{question.question}</strong>
+              <p className="text-sm mt-3 text-secondary-foreground">
+                {question.draft_response}
+              </p>
             </div>
           ))}
         </div>

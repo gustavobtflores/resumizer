@@ -35,10 +35,7 @@ interface Project {
 }
 
 interface Education {
-  gpa: string;
   degree: string;
-  honors: string[];
-  location: string;
   start_date: string;
   institution: string;
   field_of_study: string;

@@ -43,11 +43,8 @@ export const ZodResumeSchema = z.object({
       institution: z.string(),
       degree: z.string(),
       field_of_study: z.string(),
-      location: z.string(),
       start_date: z.coerce.date(),
       graduation_date: z.coerce.date(),
-      gpa: z.string(),
-      honors: z.array(z.string()),
       relevant_coursework: z.array(z.string()),
     })
   ),

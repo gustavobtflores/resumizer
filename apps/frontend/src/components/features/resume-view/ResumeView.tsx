@@ -1,31 +1,25 @@
 "use client";
 
 import Container from "@/components/layout/Container";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { StructuredResume } from "@/types/StructuredResume";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { ResumePreview } from "./ResumePreview";
-import { PersonalInfoForm } from "./PersonalInfoForm";
-import { WorkExperienceForm } from "./WorkExperienceForm";
-import { LanguagesForm } from "./LanguagesForm";
 import { useEffect } from "react";
-import { ResumeLanguageChange } from "./ResumeLanguageChange";
-import { FileDown, Trash } from "lucide-react";
+import { FileDown } from "lucide-react";
 import { Language } from "@/types/Language";
 import { ResumeVersionChange } from "./ResumeVersionChange";
+import { PersonalInfoSection } from "./sections/PersonalInfoSection";
+import { WorkExperienceSection } from "./sections/WorkExperienceSection";
+import { EducationSection } from "./sections/EducationSection";
+import { LanguagesSection } from "./sections/LanguagesSection";
+import { ProjectsSection } from "./sections/ProjectsSection";
+import { SocialContactSection } from "./sections/SocialContactSection";
 
 export default function Resume({
   resume,
-  availableLanguages,
   versions,
 }: {
   resume: StructuredResume;
@@ -42,15 +36,6 @@ export default function Resume({
     },
   });
   const formValues = form.watch();
-
-  const {
-    fields: projectsFields,
-    append: appendProject,
-    remove: removeProject,
-  } = useFieldArray({
-    control: form.control,
-    name: "projects",
-  });
 
   useEffect(() => {
     form.reset({
@@ -133,208 +118,12 @@ export default function Resume({
               className="flex flex-col gap-8"
             >
               <Accordion type="multiple">
-                <AccordionItem value="personal-info" className="px-4">
-                  <AccordionTrigger>
-                    <strong>Informações pessoais</strong>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <PersonalInfoForm control={form.control} />
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="work-experience" className="px-4">
-                  <AccordionTrigger>
-                    <strong>Experiência profissional</strong>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <WorkExperienceForm
-                      workExperience={resume.work_experience}
-                      control={form.control}
-                      formValues={formValues}
-                    />
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="education" className="px-4">
-                  <AccordionTrigger>
-                    <strong>Formação acadêmica</strong>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    {resume.education.map((edu, index) => (
-                      <div key={index}>
-                        <Controller
-                          control={form.control}
-                          name={`education.${index}.field_of_study`}
-                          render={({ field }) => (
-                            <Input
-                              type="text"
-                              {...field}
-                              placeholder="Curso"
-                              className="mb-2"
-                            />
-                          )}
-                        />
-                        <Controller
-                          control={form.control}
-                          name={`education.${index}.institution`}
-                          render={({ field }) => (
-                            <Input
-                              type="text"
-                              {...field}
-                              placeholder="Instituição"
-                              className="mb-2"
-                            />
-                          )}
-                        />
-                        <div className="flex items-center">
-                          <Controller
-                            control={form.control}
-                            name={`education.${index}.start_date`}
-                            render={({ field }) => (
-                              <Input
-                                type="date"
-                                {...field}
-                                placeholder="Data de início"
-                                className="mb-2 rounded-r-none"
-                              />
-                            )}
-                          />
-                          <Controller
-                            control={form.control}
-                            name={`education.${index}.graduation_date`}
-                            render={({ field }) => (
-                              <Input
-                                type="date"
-                                {...field}
-                                placeholder="Data de conclusão"
-                                className="mb-2 rounded-l-none"
-                              />
-                            )}
-                          />
-                        </div>
-                        <Controller
-                          control={form.control}
-                          name={`education.${index}.relevant_coursework`}
-                          render={({ field }) => (
-                            <Textarea
-                              placeholder="Disciplinas relevantes"
-                              value={field.value.join("\n")}
-                              onChange={(e) => {
-                                const raw = e.target.value;
-                                const coursework = raw.split("\n");
-
-                                field.onChange(coursework);
-                              }}
-                              className="mt-2"
-                              rows={10}
-                            />
-                          )}
-                        />
-                      </div>
-                    ))}
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="languages" className="px-4">
-                  <AccordionTrigger>
-                    <strong>Idiomas</strong>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <LanguagesForm control={form.control} />
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="projects" className="px-4">
-                  <AccordionTrigger>
-                    <strong>Projetos</strong>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    {projectsFields.map((field, index) => (
-                      <div
-                        key={field.id}
-                        className="pb-4 mb-4 border-b border-b-border"
-                      >
-                        <Controller
-                          control={form.control}
-                          name={`projects.${index}.name`}
-                          render={({ field }) => (
-                            <Input
-                              type="text"
-                              {...field}
-                              placeholder="Nome do projeto"
-                              className="mb-2"
-                            />
-                          )}
-                        />
-                        <Controller
-                          control={form.control}
-                          name={`projects.${index}.description`}
-                          render={({ field }) => (
-                            <Textarea
-                              placeholder="Descrição do projeto"
-                              rows={10}
-                              {...field}
-                            />
-                          )}
-                        />
-                        <Button
-                          variant={"destructiveGhost"}
-                          className="mt-2"
-                          onClick={() => removeProject(index)}
-                        >
-                          <Trash />
-                          Remover projeto
-                        </Button>
-                      </div>
-                    ))}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() =>
-                        appendProject({
-                          achievements: [],
-                          description: "",
-                          end_date: new Date().toDateString(),
-                          name: "",
-                          start_date: new Date().toDateString(),
-                          technologies_used: [],
-                          url: "",
-                        })
-                      }
-                    >
-                      Adicionar projeto
-                    </Button>
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="socials-contact" className="px-4">
-                  <AccordionTrigger>
-                    <strong>Redes sociais e contato</strong>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="flex flex-col gap-4">
-                      {(
-                        [
-                          { key: "email", label: "Email" },
-                          { key: "phone", label: "Telefone" },
-                          { key: "linkedin_url", label: "LinkedIn" },
-                          { key: "github_url", label: "GitHub" },
-                          { key: "portfolio_url", label: "Portfolio" },
-                        ] as const
-                      ).map((field) => (
-                        <Controller
-                          key={field.key}
-                          name={`personal_info.${field.key}`}
-                          control={form.control}
-                          render={({ field: controllerField }) => (
-                            <Input
-                              placeholder={field.label}
-                              value={controllerField.value || ""}
-                              onChange={controllerField.onChange}
-                            />
-                          )}
-                        />
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
+                <PersonalInfoSection control={form.control} />
+                <WorkExperienceSection control={form.control} />
+                <EducationSection control={form.control} />
+                <LanguagesSection control={form.control} />
+                <ProjectsSection control={form.control} />
+                <SocialContactSection control={form.control} />
               </Accordion>
               <div className="flex items-center px-4 self-end mt-2">
                 <Button

@@ -1,11 +1,11 @@
 import { CircularProgress } from "@/components/CircularProgress";
+import { GenerateTailoredButton } from "@/components/features/job-view/GenerateTailoredButton";
 import Container from "@/components/layout/Container";
 import clsx from "clsx";
 import {
   CheckCheck,
   CheckCircle,
   CircleAlert,
-  CircleFadingArrowUp,
   CircleQuestionMark,
   KeyRound,
   PencilLine,
@@ -93,6 +93,7 @@ export default async function JobView({
             <span className="text-lg text-muted-foreground">
               {data.evaluation.company}
             </span>
+            <GenerateTailoredButton jobId={id} />
           </div>
           <div className="flex flex-col gap-2 items-center">
             <CircularProgress

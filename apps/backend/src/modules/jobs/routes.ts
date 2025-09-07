@@ -1,10 +1,8 @@
 import { FastifyInstance } from "fastify";
 import { CreateJobSchema } from "./contracts";
 import { createJob, deleteJobById, findAllJobs, findJobById } from "./repo";
-import { evaluateResume } from "./services";
-import { findResumeTranslationByIdAndLanguage } from "../../database/queries/resume-translations";
+import { evaluateResume, tailorResume } from "./services";
 import { ResumeVersionsRepo } from "../resume-versions/repo";
-import { Resume } from "../../types/resume";
 
 export default async function jobs(fastify: FastifyInstance) {
   fastify.post("/jobs", async (request, reply) => {
@@ -36,6 +34,36 @@ export default async function jobs(fastify: FastifyInstance) {
       console.error(error);
       reply.status(500).send({ error: "Failed to create job" });
     }
+  });
+
+  fastify.post("/jobs/:id/tailor", async (request, reply) => {
+    const jobId = (request.params as { id: string }).id;
+    const job = await findJobById(jobId);
+
+    if (!job)
+      return reply.status(404).send({ error: { message: "Job not found" } });
+
+    const resume = await ResumeVersionsRepo.findVersionById(
+      job.resume_version_id
+    );
+
+    if (!resume)
+      return reply
+        .status(404)
+        .send({ error: { message: "Resume version not found" } });
+
+    const tailored = await tailorResume(fastify, {
+      jobDescription: job.job_description,
+      resume: JSON.stringify(resume.json),
+    });
+
+    const createdVersion = await ResumeVersionsRepo.createVersion({
+      json: tailored,
+      resume_id: resume.resume_id,
+      version_number: resume.version_number + 1,
+    });
+
+    reply.status(201).send({ data: createdVersion });
   });
 
   fastify.get("/jobs", async (request, reply) => {
